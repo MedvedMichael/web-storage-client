@@ -10,31 +10,84 @@ export default class CategoryPage extends Component {
 
     state = {
         selectedCategory: null,
-        selectedSubcategory:null
+        selectedSubcategory: null
     }
 
     onCategorySelected = (selectedCategory) => {
         this.setState({ selectedCategory })
     }
 
-    getSubcategoriesOfCurrentCategory = () => {
-        if(!this.state.selectedCategory)
-        return
-
-
+    onSubcategorySelected = (selectedSubcategory) => {
+        this.setState({ selectedSubcategory })
     }
+
+    getSubcategoriesOfCurrentCategory = () => {
+        if (!this.state.selectedCategory)
+            return
+    }
+
+    renderSubcategories = (subcategories) => {
+        return subcategories.map(({ id, name }) => {
+            return (
+                <li className="list-group-item"
+                    key={id}
+                    onClick={() => { this.onSubcategorySelected(id) }}>
+                    {name}
+                </li>
+            )
+        })
+    }
+
+    renderVideosets = (videosets) => {
+
+        const videosetsCards = videosets.map(({ name, description, id }) => {
+            return (
+                <div key={id} className="card">
+                    <div className="card-body">
+                        <h4>{name}</h4>
+
+                        <ul className="list-group list-group-flush">
+                            <li className="list-group-item">
+                                <span className="term">Description</span>
+                                <span>{description}</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            )
+        })
+
+
+
+        return (
+            <div>
+            <ul className="list-group">
+
+                {videosetsCards}
+            </ul>
+            </div>
+        )
+    }
+
+
 
     render() {
         const onNullText = <h4 className='select-message'>Select the category</h4>
         const categoriesList = (<ItemList onItemSelected={this.onCategorySelected} getData={this.webStorageService.getAllCategories} />)
-        const categoryDetails = (<ItemDetails onNullText={onNullText} itemId={this.state.selectedCategory} getData={this.webStorageService.getCategory} />)
+        const categoryDetails = (<ItemDetails renderSubitems={this.renderSubcategories} onSubitemSelected={this.onSubcategorySelected} onNullText={onNullText} itemId={this.state.selectedCategory} getData={this.webStorageService.getCategory} getSubitems={this.webStorageService.getSubcategoriesOfCategory} />)
 
-        const subcategoryDetails = (<ItemDetails onNullText={null} itemId={this.state.selectedSubcategory} />) //TODO
+
+        const videosetViews = (this.state.selectedSubcategory) ? (<ItemDetails renderSubitems={this.renderVideosets} onSubitemSelected={() => { }} itemId={this.state.selectedSubcategory} getData={this.webStorageService.getSubcategory} getSubitems={this.webStorageService.getVideosetsOfSubcategory} />) : null
 
         return (
             <div>
-                <h3>Categories</h3>
-                <Row left={categoriesList} right={categoryDetails} />
+                <div>
+                    <h3>Categories</h3>
+                    <Row left={categoriesList} right={categoryDetails} />
+                </div>
+                <div className="videoset-views">
+                    {videosetViews}
+                </div>
             </div>
         )
     }

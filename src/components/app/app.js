@@ -14,7 +14,7 @@ export default class App extends Component{
             <div>
                 <Header />
                 <CategoryPage/>
-
+            
             </div>
         )
     }

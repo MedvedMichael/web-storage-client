@@ -5,6 +5,7 @@ export default class ItemDetails extends Component {
 
     state = {
         item: null,
+        subItems:null,
         loading: false
     }
 
@@ -13,12 +14,13 @@ export default class ItemDetails extends Component {
     }
 
     updateItem = () => {
-        const { itemId, getData } = this.props
+        const { itemId, getData, getSubitems } = this.props
         if (!itemId)
             return
 
         this.setState({ loading: true })
-        getData(itemId).then((item) => this.setState({ item, loading: false }))
+        getData(itemId).then((item) => this.setState({ item }))
+        getSubitems(itemId).then((subItems) => this.setState({ subItems, loading: false  }))
     }
 
     componentDidUpdate(prevProps) {
@@ -27,7 +29,7 @@ export default class ItemDetails extends Component {
     }
     render() {
 
-        const { item, loading } = this.state
+        const { item, loading, subItems } = this.state
         if (!item)
             return (
                 <li className="list-group-item">
@@ -36,28 +38,27 @@ export default class ItemDetails extends Component {
         if (loading)
             return <Spinner />
 
-        const { name, subItems } = item
+        const { name } = item
         let subItemsViews
 
-        if (subItems.length === 0)
+        if (!subItems.length)
             subItemsViews = <h4 className='no-content-message'>Oops, there's no content</h4>
 
-        else subItemsViews = subItems.map(({ _id, name }) => {
-            // console.log(description)
-            return (
-                <div key={_id}>
-                    <li className="list-group-item">
-                        <div>
-                            <span>{name}</span>
-                            
-                        </div>
-                    </li>
-                </div>)
-        })
+        // else subItemsViews = subItems.map(({ id, name }) => {
+        //     // console.log(description)
+        //     return (
+        //         <li className="list-group-item"
+        //             key={id}
+        //             onClick={() => { this.props.onSubitemSelected(id) }}>
+        //             {name}
+        //         </li>
+        //     )
+        // })
+        else subItemsViews = this.props.renderSubitems(subItems)
 
 
         return (
-            <div className="person-details card">
+            <div className="card">
 
                 <div className="card-body">
                     <h4>{name}</h4>

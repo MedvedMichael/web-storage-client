@@ -8,13 +8,14 @@
     font-size: 60px;
 }
 
+.header h4 {
+    margin-left: auto;
+    font-size: 25px;
+    padding-top: 1.75rem;
+    
+}
+
 .header a:hover {
     text-decoration: none;
 }
 
-.header ul li {
-    list-style: none;
-    margin: 0;
-    border-radius: 3px;
-    padding: .5rem 1rem;
-}

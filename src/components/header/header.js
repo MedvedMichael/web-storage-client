@@ -7,6 +7,7 @@ const Header = () => {
             <h1>
                 <a href="#">Web Storage</a>
             </h1>
+            <h4>Done by Medvediev Michael and TUHICH</h4>
         
         </div>
     )
