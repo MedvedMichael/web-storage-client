@@ -9,9 +9,7 @@ export default class App extends Component{
 
     }
 
-    render(){
-
-        
+    render(){        
         return(
             <div>
                 <Header />
@@ -19,7 +17,6 @@ export default class App extends Component{
 
             </div>
         )
-
     }
 
 }

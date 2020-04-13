@@ -23,6 +23,10 @@ export default class WebStorageService {
         return this._addSubcategoriesToCategory(this._transformCategory(category))
     }
 
+    getVideosetsOfSubcategory = async (id) =>{
+        const videosets = await this.getResourse(`/videosets?`)//TODO
+    }
+
     _transformCategory = (category) => {
         return {
             ...category,

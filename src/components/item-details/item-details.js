@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Spinner from '../spinner';
-
+import './item-details.css'
 export default class ItemDetails extends Component {
 
     state = {
@@ -29,18 +29,30 @@ export default class ItemDetails extends Component {
 
         const { item, loading } = this.state
         if (!item)
-            return <span>Kukusiki</span>
-
+            return (
+                <li className="list-group-item">
+                    {this.props.onNullText}
+                </li>)
         if (loading)
             return <Spinner />
 
         const { name, subItems } = item
+        let subItemsViews
 
-        const subItemsViews = subItems.map(({ name }) => {
+        if (subItems.length === 0)
+            subItemsViews = <h4 className='no-content-message'>Oops, there's no content</h4>
+
+        else subItemsViews = subItems.map(({ _id, name }) => {
+            // console.log(description)
             return (
-                <li className="list-group-item">
-                    <span>{name}</span>
-                </li>)
+                <div key={_id}>
+                    <li className="list-group-item">
+                        <div>
+                            <span>{name}</span>
+                            
+                        </div>
+                    </li>
+                </div>)
         })
 
 

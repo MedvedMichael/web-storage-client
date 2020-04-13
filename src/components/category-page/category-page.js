@@ -9,7 +9,8 @@ export default class CategoryPage extends Component {
     webStorageService = new WebStorageService()
 
     state = {
-        selectedCategory: null
+        selectedCategory: null,
+        selectedSubcategory:null
     }
 
     onCategorySelected = (selectedCategory) => {
@@ -20,12 +21,15 @@ export default class CategoryPage extends Component {
         if(!this.state.selectedCategory)
         return
 
-        
+
     }
 
     render() {
+        const onNullText = <h4 className='select-message'>Select the category</h4>
         const categoriesList = (<ItemList onItemSelected={this.onCategorySelected} getData={this.webStorageService.getAllCategories} />)
-        const categoryDetails = (<ItemDetails itemId={this.state.selectedCategory} getData={this.webStorageService.getCategory} />)
+        const categoryDetails = (<ItemDetails onNullText={onNullText} itemId={this.state.selectedCategory} getData={this.webStorageService.getCategory} />)
+
+        const subcategoryDetails = (<ItemDetails onNullText={null} itemId={this.state.selectedSubcategory} />) //TODO
 
         return (
             <div>
