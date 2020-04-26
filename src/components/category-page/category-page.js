@@ -1,5 +1,6 @@
 
 import React, { Component } from 'react';
+import {Link} from 'react-router-dom'
 import WebStorageService from '../../services/web-storage-service'
 import ItemList from '../item-list'
 import ItemDetails from '../item-details'
@@ -14,7 +15,7 @@ export default class CategoryPage extends Component {
     }
 
     onCategorySelected = (selectedCategory) => {
-        this.setState({ selectedCategory })
+        this.setState({ selectedCategory, selectedSubcategory: null })
     }
 
     onSubcategorySelected = (selectedSubcategory) => {
@@ -27,28 +28,34 @@ export default class CategoryPage extends Component {
     }
 
     renderSubcategories = (subcategories) => {
-        return subcategories.map(({ id, name }) => {
-            return (
-                <li className="list-group-item"
-                    key={id}
-                    onClick={() => { this.onSubcategorySelected(id) }}>
-                    {name}
-                </li>
-            )
-        })
+        return (
+            <ul className="subcategories-list item-list list-group">
+                {subcategories.map(({ id, name }) => {
+                    return (
+                        <li className="list-group-item"
+                            key={id}
+                            onClick={() => { this.onSubcategorySelected(id) }}>
+                            {name}
+                        </li>
+                    )
+                })}
+            </ul>)
     }
 
     renderVideosets = (videosets) => {
 
         const videosetsCards = videosets.map(({ name, description, id }) => {
+            const pathToVideoset = `/videosets/${id}`
             return (
-                <div key={id} className="card">
+                <div key={id} className="videoset-card card">
                     <div className="card-body">
-                        <h4>{name}</h4>
+                        <h4>
+                            <Link to={pathToVideoset}>{name}</Link>
+                        </h4>
 
                         <ul className="list-group list-group-flush">
                             <li className="list-group-item">
-                                <span className="term">Description</span>
+                                <h5 className="term">Description</h5>
                                 <span>{description}</span>
                             </li>
                         </ul>
@@ -60,11 +67,12 @@ export default class CategoryPage extends Component {
 
 
         return (
-            <div>
-            <ul className="list-group">
-
-                {videosetsCards}
-            </ul>
+            <div className="videosets-container container">
+                {/* <ul className="list-group"> */}
+                <div className="row">
+                    {videosetsCards}
+                </div>
+                {/* </ul> */}
             </div>
         )
     }
@@ -73,9 +81,15 @@ export default class CategoryPage extends Component {
 
     render() {
         const onNullText = <h4 className='select-message'>Select the category</h4>
-        const categoriesList = (<ItemList onItemSelected={this.onCategorySelected} getData={this.webStorageService.getAllCategories} />)
-        const categoryDetails = (<ItemDetails renderSubitems={this.renderSubcategories} onSubitemSelected={this.onSubcategorySelected} onNullText={onNullText} itemId={this.state.selectedCategory} getData={this.webStorageService.getCategory} getSubitems={this.webStorageService.getSubcategoriesOfCategory} />)
+        const categoriesList = (
+            <div className="card">
+                <div className="card-body">
+                    <h4>Categories</h4>
+                    <ItemList onItemSelected={this.onCategorySelected} getData={this.webStorageService.getAllCategories} />
+                </div>
+            </div>)
 
+        const categoryDetails = (!this.state.selectedCategory)?null:(<ItemDetails renderSubitems={this.renderSubcategories} onSubitemSelected={this.onSubcategorySelected} onNullText={onNullText} itemId={this.state.selectedCategory} getData={this.webStorageService.getCategory} getSubitems={this.webStorageService.getSubcategoriesOfCategory} />)
 
         const videosetViews = (this.state.selectedSubcategory) ? (<ItemDetails renderSubitems={this.renderVideosets} onSubitemSelected={() => { }} itemId={this.state.selectedSubcategory} getData={this.webStorageService.getSubcategory} getSubitems={this.webStorageService.getVideosetsOfSubcategory} />) : null
 
@@ -94,9 +108,10 @@ export default class CategoryPage extends Component {
 }
 
 const Row = ({ left, right }) => {
+    const width = `row-item col-md-${(right)?6:12}`;
     return (
         <div className="row mb2">
-            <div className="col-md-6">
+            <div className={width}>
                 {left}
             </div>
             <div className="col-md-6">

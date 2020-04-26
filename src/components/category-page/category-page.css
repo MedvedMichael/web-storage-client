@@ -3,7 +3,33 @@ h3 {
     padding-bottom: 2rem;
     font-size: 40px;
 }
-
-.videoset-views {
-    padding-top: 2rem;
+.subcategories-list {
+    padding-top: .5rem;
 }
+.videoset-views {
+    padding-top: 2.5rem;
+}
+
+.row-item{
+    margin-bottom: auto;
+}
+
+.term{
+    padding-right: 0.5rem;
+    font-size: 20px;
+}
+
+
+.videosets-container {
+    padding-top: .5rem;
+}
+
+.videoset-card {
+    margin-left: .5rem;
+    margin-right: .5rem;
+    border-radius:1rem;
+    
+}
+
+
+

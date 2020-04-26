@@ -27,7 +27,7 @@ export default class ItemList extends Component {
       return <Spinner />
 
     const itemViews = itemList.map(({ name, id }) => {
-      console.log(`Id ${name}`)
+      // console.log(`Id ${name}`)
       return (
         <li className="list-group-item"
           key={id}
@@ -35,10 +35,11 @@ export default class ItemList extends Component {
       )
     })
     return (
-      <ul className="item-list list-group">
-        {itemViews}
-      </ul>
-
+      
+        <ul className="item-list list-group">
+          {itemViews}
+        </ul>
+    
     );
   }
 }

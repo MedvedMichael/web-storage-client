@@ -30,11 +30,14 @@ export default class ItemDetails extends Component {
     render() {
 
         const { item, loading, subItems } = this.state
-        if (!item)
-            return (
-                <li className="list-group-item">
-                    {this.props.onNullText}
-                </li>)
+
+        if(!item)
+        return null
+        // if (!item)
+        //     return (
+        //         <li className="list-group-item">
+        //             {this.props.onNullText}
+        //         </li>)
         if (loading)
             return <Spinner />
 
@@ -62,9 +65,9 @@ export default class ItemDetails extends Component {
 
                 <div className="card-body">
                     <h4>{name}</h4>
-                    <ul className="item-list list-group">
+                
                         {subItemsViews}
-                    </ul>
+                    
                 </div>
             </div>
         )
