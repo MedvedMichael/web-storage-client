@@ -1,27 +1,28 @@
 import React, { Component } from 'react';
 import WebStorageService from '../../services/web-storage-service';
-
+import './picture-slider.css'
+import Spinner from '../spinner';
 export default class PictureSlider extends Component {
 
     webStorageService = new WebStorageService()
 
     state = {
-        slideIndex:0,
-        slides:null
+        slides: null,
+        slideIndex:null,
+        currentSlide:null
     }
 
-    componentDidMount(){
-        const {dataURLs} = this.props
-        const slides = dataURLs.map(path => {
+    componentDidMount() {
+        const { dataURLs } = this.props
+        const slides = dataURLs.map((path) => {
             return (<SlideView key={path} path={path} />)
         });
+        this.setState({ slides, slideIndex:0})
         
-        this.setState({slides})
-    
     }
 
     changeSlideIndex = (number) => {
-        const {slides, slideIndex} = this.state
+        const { slides, slideIndex } = this.state
         const currentSlideIndex = slideIndex
         let newSlideIndex = currentSlideIndex + number
 
@@ -31,46 +32,72 @@ export default class PictureSlider extends Component {
         if (newSlideIndex < 0)
             newSlideIndex += slides.length
 
-
-        this.setState({slideIndex:newSlideIndex})
+        
+        this.setState({ slideIndex: newSlideIndex })
     }
 
-    onPrevButtonClick = () =>{
+    onPrevButtonClick = () => {
         this.changeSlideIndex(-1)
     }
 
-    onNextButtonClick = () =>{
+    onNextButtonClick = () => {
         this.changeSlideIndex(1)
     }
 
-    updateSlides = () =>{
-         
+    onDotClick = (index) => {
+        const {slideIndex} = this.state
+        this.changeSlideIndex(index - slideIndex)
     }
 
+
     render() {
-        const {slides} = this.state
-        if(!slides)
-        return null;
-        const dots = slides.map(element => {
-            return <DotView/>
+        const { slides, slideIndex } = this.state
+        if (!slides)
+            return <Spinner/>;
+
+        if(!slides[slideIndex])
+            return <Spinner />
+        
+        const currentSlide = slides[slideIndex];
+        const dots = slides.map((element,index) => {
+            const isActive = index === slideIndex
+            return <DotView isActive={isActive} id={index} onClick={this.onDotClick} key={"dot" + index}/>
         });
+
         return (
-             <div className="container">
-                 {this.state.slides}
-             </div>
+            <div className="content">
+                <div className="slider">
+                    <div className="wrap">
+                        {currentSlide}
+                        <div className="prev" onClick={this.onPrevButtonClick}>
+                            <div className="arrow-left"></div>
+                        </div>
+                        <div className="next" onClick={this.onNextButtonClick}>
+                            <div className="arrow-right"></div>
+                        </div>
+                    </div>
+                    <div className="slider-dots">
+                        {dots}
+                    </div>
+
+                </div>
+            </div>
         );
     }
 }
 
-const SlideView = ({path}) => {
-    return(
-        <img src={path} alt="slider"/>
+const SlideView = ({ path }) => {
+
+    return (
+        <div className="slider-item">
+            <img src={path} alt="slider" />
+        </div>
     )
 }
 
-const DotView = ({isSelected}) => {
-    
+const DotView = ({ isActive, id, onClick }) => {
+    const className = "dot" + (isActive?" dot-active":"")
     return (
-        <div className="dot"></div>
+        <div className={className} onClick={()=>onClick(id)}></div>
     )
 }

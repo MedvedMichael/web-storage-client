@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
+import {Link} from 'react-router-dom'
 import './header.css'
 const Header = () => {
 
     return (
         <div className="header d-flex">
             <h1>
-                <a href="#">Web Storage</a>
+                <Link to="/">Web Storage</Link>
             </h1>
             <h4>Done by Medvediev Michael and TUHICH</h4>
         

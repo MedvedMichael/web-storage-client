@@ -33,6 +33,11 @@ export default class WebStorageService {
         return videosets.map(this._transformItem)
     }
 
+    getVideoset = async (id) =>{
+        const videoset = await this.getResourse(`/videoset/${id}`)
+        return this._transformItem(videoset)
+    }
+
     _transformItem = (item) => {
         return {
             ...item,

@@ -16,16 +16,16 @@ export default class App extends Component{
         
         return(
             <div>
-                <Router>
+                <Router> 
                     <Header />
-                    {/* <Route path="/" component={CategoryPage} exact={true}/>
+                    <Route path="/" component={CategoryPage} exact={true}/>
                     <Route path="/videosets/:id" 
                     render={({match})=>{
-                        console.log(match)
-                        return <VideosetPage id={match.params.id}/>
-                    }}/> */}
+                        
+                        return <VideosetPage id={match.params.id} getData={this.webStorageService.getVideoset} /> //TODO
+                    }}/>
                 
-                </Router>
+                 </Router>
             </div>
         )
     }
