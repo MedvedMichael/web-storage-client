@@ -2,8 +2,8 @@
 import React, { Component } from 'react';
 import {Link} from 'react-router-dom'
 import WebStorageService from '../../services/web-storage-service'
-import ItemList from '../item-list'
-import ItemDetails from '../item-details'
+import ItemList from '../item-list/item-list'
+import ItemDetails from '../item-details/item-details'
 import './category-page.css'
 export default class CategoryPage extends Component {
 

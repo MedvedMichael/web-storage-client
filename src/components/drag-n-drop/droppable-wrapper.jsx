@@ -3,7 +3,6 @@ import { Droppable } from 'react-beautiful-dnd';
 
 const DroppableWrapper = ({droppableId,className,children}) =>
 {
-  console.log(droppableId, className, children)
   return (
   <Droppable droppableId={droppableId}>
     {({innerRef,droppableProps,droppablePlaceholder}) => (

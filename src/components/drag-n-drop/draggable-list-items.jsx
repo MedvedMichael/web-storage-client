@@ -8,7 +8,6 @@ const DraggableListItems = (props) =>{
 }
 
 function toBox(item, position) {
-    console.log(item)
   return <DraggableBox key={item.props.id} className="box" itemPosition={position} value={item.props.id} content={item} />
 }
 

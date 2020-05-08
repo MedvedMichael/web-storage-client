@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Spinner from '../spinner';
+import Spinner from '../spinner/spinner';
 import './item-details.css'
 export default class ItemDetails extends Component {
 

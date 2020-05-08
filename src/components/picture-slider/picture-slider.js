@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import WebStorageService from '../../services/web-storage-service';
 import './picture-slider.css'
-import Spinner from '../spinner';
+import Spinner from '../spinner/spinner';
 export default class PictureSlider extends Component {
 
     webStorageService = new WebStorageService()
