@@ -33,11 +33,7 @@ export default class ItemDetails extends Component {
 
         if(!item)
         return null
-        // if (!item)
-        //     return (
-        //         <li className="list-group-item">
-        //             {this.props.onNullText}
-        //         </li>)
+
         if (loading)
             return <Spinner />
 
@@ -47,16 +43,6 @@ export default class ItemDetails extends Component {
         if (!subItems.length)
             subItemsViews = <h4 className='no-content-message'>Oops, there's no content</h4>
 
-        // else subItemsViews = subItems.map(({ id, name }) => {
-        //     // console.log(description)
-        //     return (
-        //         <li className="list-group-item"
-        //             key={id}
-        //             onClick={() => { this.props.onSubitemSelected(id) }}>
-        //             {name}
-        //         </li>
-        //     )
-        // })
         else subItemsViews = this.props.renderSubitems(subItems)
 
 
@@ -64,7 +50,7 @@ export default class ItemDetails extends Component {
             <div className="card">
 
                 <div className="card-body">
-                    <h4>{name}</h4>
+                    {this.props.renderTitle(name)}
                 
                         {subItemsViews}
                     

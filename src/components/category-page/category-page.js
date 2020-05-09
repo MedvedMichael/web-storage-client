@@ -1,6 +1,6 @@
 
 import React, { Component } from 'react';
-import {Link} from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 import WebStorageService from '../../services/web-storage-service'
 import ItemList from '../item-list/item-list'
 import ItemDetails from '../item-details/item-details'
@@ -11,7 +11,8 @@ export default class CategoryPage extends Component {
 
     state = {
         selectedCategory: null,
-        selectedSubcategory: null
+        selectedSubcategory: null,
+        redirectTo: null
     }
 
     onCategorySelected = (selectedCategory) => {
@@ -42,25 +43,22 @@ export default class CategoryPage extends Component {
             </ul>)
     }
 
+    // renderRedirect = () => {
+    //     if (this.state.redirectTo) {
+    //         const history = useHistory()
+    //         history.push(this.state.redirectTo)
+    //         return <Redirect to={this.state.redirectTo} />
+    //     }
+    // }
+
+
+
+    
     renderVideosets = (videosets) => {
-
-        const videosetsCards = videosets.map(({ name, description, id }) => {
-            const pathToVideoset = `/videosets/${id}`
+        const videosetsCards = videosets.map((props,index) => {
+            const key = `VideosetCard-${index}`
             return (
-                <div key={id} className="videoset-card card">
-                    <div className="card-body">
-                        <h4>
-                            <Link to={pathToVideoset}>{name}</Link>
-                        </h4>
-
-                        <ul className="list-group list-group-flush">
-                            <li className="list-group-item">
-                                <h5 className="term">Description</h5>
-                                <span>{description}</span>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
+                <VideosetCard key={key} {...props}/>
             )
         })
 
@@ -69,9 +67,9 @@ export default class CategoryPage extends Component {
         return (
             <div className="videosets-container container">
                 {/* <ul className="list-group"> */}
-                <div className="row">
-                    {videosetsCards}
-                </div>
+
+                {videosetsCards}
+
                 {/* </ul> */}
             </div>
         )
@@ -84,17 +82,19 @@ export default class CategoryPage extends Component {
         const categoriesList = (
             <div className="card">
                 <div className="card-body">
-                    <h4>Categories</h4>
+                    <h4 className="all-categories-title">All Categories</h4>
                     <ItemList onItemSelected={this.onCategorySelected} getData={this.webStorageService.getAllCategories} />
                 </div>
             </div>)
+        const renderCategoryTitle = (name) => <h4 className="category-title">Subcategories of category "{name}"</h4>
+        const categoryDetails = (!this.state.selectedCategory) ? null : (<ItemDetails renderTitle={renderCategoryTitle} renderSubitems={this.renderSubcategories} onSubitemSelected={this.onSubcategorySelected} onNullText={onNullText} itemId={this.state.selectedCategory} getData={this.webStorageService.getCategory} getSubitems={this.webStorageService.getSubcategoriesOfCategory} />)
 
-        const categoryDetails = (!this.state.selectedCategory)?null:(<ItemDetails renderSubitems={this.renderSubcategories} onSubitemSelected={this.onSubcategorySelected} onNullText={onNullText} itemId={this.state.selectedCategory} getData={this.webStorageService.getCategory} getSubitems={this.webStorageService.getSubcategoriesOfCategory} />)
-
-        const videosetViews = (this.state.selectedSubcategory) ? (<ItemDetails renderSubitems={this.renderVideosets} onSubitemSelected={() => { }} itemId={this.state.selectedSubcategory} getData={this.webStorageService.getSubcategory} getSubitems={this.webStorageService.getVideosetsOfSubcategory} />) : null
+        const renderSubcategoryTitle = (name) => <h3 className="subcategory-title">Videosets of subcategory "{name}"</h3>
+        const videosetViews = (this.state.selectedSubcategory) ? (<ItemDetails renderTitle={renderSubcategoryTitle} renderSubitems={this.renderVideosets} onSubitemSelected={() => { }} itemId={this.state.selectedSubcategory} getData={this.webStorageService.getSubcategory} getSubitems={this.webStorageService.getVideosetsOfSubcategory} />) : null
 
         return (
             <div>
+
                 <div>
                     <h3 className="categories-title">Categories</h3>
                     <Row left={categoriesList} right={categoryDetails} />
@@ -108,7 +108,7 @@ export default class CategoryPage extends Component {
 }
 
 const Row = ({ left, right }) => {
-    const width = `row-item col-md-${(right)?6:12}`;
+    const width = `row-item col-md-${(right) ? 6 : 12}`;
     return (
         <div className="row mb2">
             <div className={width}>
@@ -119,4 +119,26 @@ const Row = ({ left, right }) => {
             </div>
         </div>
     )
+}
+
+const VideosetCard = ({ id, name, description }) => {
+
+    const pathToVideoset = `/videosets/${id}`
+    const history = useHistory()
+    return (
+        <div key={id} className="videoset-card card border-success"
+            onClick={() => {
+                history.push(pathToVideoset)
+            }} >
+            <div className="card-header">
+                <h4>
+                    <Link to={pathToVideoset}>{name}</Link>
+                </h4>
+            </div>
+            <div className="card-body">
+                <h4 className="card-title">Description</h4>
+                <p className="card-text">{description}</p>
+
+            </div>
+        </div>)
 }

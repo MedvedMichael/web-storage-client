@@ -28,8 +28,25 @@
 .videoset-card {
     margin-left: .5rem;
     margin-right: .5rem;
-    border-radius:1rem;
+    border-radius:.5rem;
+    margin-bottom: 1rem;
+    margin-top: .5rem;
     
+}
+
+.all-categories-title{
+    padding-bottom: .5rem;
+}
+
+
+
+.videoset-card:hover {
+    /* border-radius:20rem; */
+    background-color: #00bc8c;
+}
+
+.videoset-card .card-header {
+    border-radius:.5rem
 }
 
 
