@@ -2,10 +2,36 @@
     margin-left: 1.5rem;
     padding-top: 0.5rem;
     padding-bottom: .3rem;
+    font-size: xxx-large;
+}
+
+.user-card{
+    text-align: right;
+    margin-left: auto;
+    border-radius:1rem;
+}
+
+.header-button {
+    margin-left: 0.25rem;
+    margin-right: 0.25rem;
+}
+.header-button-group{
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+}
+
+.user-card .welcome-title {
+    padding: 10%;
+}
+
+.login-link{
+    margin-left: auto;
+    padding-right: 1rem;
+    padding-top: 1rem;
 }
 
 .header h1{
-    font-size: 60px;
+    font-size: 80px;
 }
 
 .header h4 {

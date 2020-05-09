@@ -1,5 +1,73 @@
+
 export default class WebStorageService {
     _apiBase = 'http://localhost:3001'
+
+    signInByCredentials = async (email, password) => {
+        const data = {email, password}
+        const url = '/users/login'
+        const res = await fetch(`${this._apiBase}${url}`, {
+            method: 'POST', // *GET, POST, PUT, DELETE, etc.
+            mode: 'cors', // no-cors, *cors, same-origin
+            headers: {
+              'Content-Type': 'application/json'
+              // 'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: JSON.stringify(data) // body data type must match "Content-Type" header
+          })
+
+        if(!res.ok)
+            return {ok:false, error:res.statusText}
+        
+        return await res.json()
+         
+    }
+
+    registerByCredentials = async (name, nickname,email, password) => {
+        const data = {name, nickname,email, password}
+        const url = '/users'
+        const res = await fetch(`${this._apiBase}${url}`, {
+            method: 'POST', // *GET, POST, PUT, DELETE, etc.
+            mode: 'cors', // no-cors, *cors, same-origin
+            headers: {
+              'Content-Type': 'application/json'
+              // 'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: JSON.stringify(data) // body data type must match "Content-Type" header
+          })
+
+        const result = await res.json()
+        if (!res.ok)
+            return this.checkDataForErrors(result)
+        
+        return result
+    }
+
+
+    checkDataForErrors = (data) => {
+        
+        if (data.name === "ValidationError") {
+            const { errors } = data
+            const keys = Object.keys(errors)
+            for (let index = 0; index<keys.length;index++) {
+                const key = keys[index]
+                if(errors[key].kind === "required")
+                    return { error: "Please enter all information" }
+                    
+                if (errors[key].kind === "user defined") 
+                    return { error: `Invalid ${key}!` }
+                
+                if (errors[key].kind === "minlength" && key === "password") 
+                    return { error: "Password should contain at least 7 characters!" }
+                
+            }
+        }
+
+        else if (data.name === "MongoError"){
+            return {error: "This e-mail is already used, try another"}
+        }
+
+    }
+
 
     getResourse = async (url) => {
         const res = await fetch(`${this._apiBase}${url}`)

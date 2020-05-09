@@ -1,4 +1,4 @@
-h3 {
+.categories-title {
     text-align:center;
     padding-bottom: 2rem;
     font-size: 40px;
@@ -8,6 +8,7 @@ h3 {
 }
 .videoset-views {
     padding-top: 2.5rem;
+    padding-bottom: 5rem;
 }
 
 .row-item{

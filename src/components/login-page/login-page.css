@@ -1,0 +1,30 @@
+.login{
+    padding: 5%;
+    padding-left: 20%;
+    padding-right: 20%;
+}
+
+.login-card{
+    border-radius: 1rem;
+}
+
+.login-page{
+    padding-top: 2rem;
+}
+
+.login-title{
+    padding-bottom: .5rem;
+    text-align: center;
+}
+.login-title-second {
+    padding-bottom: 1rem;
+    text-align: center;
+}
+
+.login-button {
+    width: 50%;
+}
+
+.error-message {
+    margin-bottom: 1rem;
+}

@@ -1,27 +1,52 @@
 import React, { Component } from 'react';
-import {BrowserRouter as Router, Route} from 'react-router-dom' 
+import { BrowserRouter as Router, Route } from 'react-router-dom'
 import Header from '../header/header'
 import VideosetPage from '../videoset-page/videoset-page'
-import WebStorageService from '../../services/web-storage-service'
 import CategoryPage from '../category-page/category-page'
+import LoginPage from '../login-page/login-page';
 
-const App = () => {
+class App extends Component {
 
-    const webStorageService = new WebStorageService()
-    return (
-        <div>
-            <Router>
-                <Header />
-                <Route path="/" component={CategoryPage} exact={true} />
-                <Route path="/videosets/:id"
-                    render={({ match }) => {
+    state = {
+        user: null
+    }
 
-                        return <VideosetPage id={match.params.id} getData={webStorageService.getVideoset} /> //TODO
-                    }} />
+    componentDidMount = () => {
+        this.updateUser()
+    }
 
-            </Router>
-        </div>
-    )
+    updateUser = () => {
+        try {
+            const user = JSON.parse(localStorage.getItem('user'))
+            this.setState({ user })
+        }
+        catch (error) {
+            this.setState({ user: null })
+        }
+    }
+
+
+    render() {
+        const { user } = this.state
+        return (
+            <div>
+                <Router>
+                    <Header user={user} onUserUpdate={()=>this.updateUser()}/>
+                    <Route path="/" component={CategoryPage} exact={true} />
+                    <Route path="/login"  exact={true} 
+                    render={()=>{
+                        return <LoginPage onUserUpdate={()=>this.updateUser()}/>
+                    }}/>
+                    <Route path="/videosets/:id"
+                        render={({ match }) => {
+
+                            return <VideosetPage id={match.params.id} /> //TODO
+                        }} />
+
+                </Router>
+            </div>
+        )
+    }
 
 
 }

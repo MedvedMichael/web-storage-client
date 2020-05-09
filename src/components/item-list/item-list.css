@@ -4,6 +4,7 @@
 
 .item-list .list-group-item {
   cursor: pointer;
+  font-size: large;
 }
 
 .item-list .list-group-item:hover {

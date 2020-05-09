@@ -96,7 +96,7 @@ export default class CategoryPage extends Component {
         return (
             <div>
                 <div>
-                    <h3>Categories</h3>
+                    <h3 className="categories-title">Categories</h3>
                     <Row left={categoriesList} right={categoryDetails} />
                 </div>
                 <div className="videoset-views">
