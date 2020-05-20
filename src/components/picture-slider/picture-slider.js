@@ -14,6 +14,8 @@ export default class PictureSlider extends Component {
 
     componentDidMount() {
         const { dataURLs } = this.props
+        if(!dataURLs)
+            return
         const slides = dataURLs.map((path) => {
             return (<SlideView key={path} path={path} />)
         });
@@ -53,7 +55,7 @@ export default class PictureSlider extends Component {
     render() {
         const { slides, slideIndex } = this.state
         if (!slides)
-            return <Spinner/>;
+            return <h3 className="error-message">There's no content</h3>;
 
         if(!slides[slideIndex])
             return <Spinner />

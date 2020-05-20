@@ -1,0 +1,23 @@
+.videos-module-title{
+    padding-bottom: 1rem;
+    margin-left: 1.5rem;
+}
+
+.no-content{
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.video-image {
+    background: url(./pictures/videocam-dark.jpg);   
+}
+
+.video-card{
+    margin-left: 1rem;
+    margin: 2%;
+}
+
+.video-card .card-body {
+    padding: 0%;
+}

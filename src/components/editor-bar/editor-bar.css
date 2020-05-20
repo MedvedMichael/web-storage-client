@@ -1,0 +1,24 @@
+.editor-bar {
+    display: block;
+    flex:1;
+    border-radius:0.5rem;
+    padding: 1%;
+    
+}
+
+.editor-bar-container{
+    display: flex;
+    margin-top: 0;
+    flex:1;
+}
+
+.dropdown-toggle {
+    font-size: 125%;
+}
+
+.dropdown-menu {
+    position: absolute; 
+    transform: translate3d(0px, 39px, 0px); 
+    top: 0px; left: 0px; 
+    will-change: transform;
+}

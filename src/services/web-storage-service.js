@@ -42,6 +42,23 @@ export default class WebStorageService {
         return result
     }
 
+    getUserProfile = async (token) => {
+        const url = '/users/me'
+        const res = await fetch(`${this._apiBase}${url}`, {
+            method: 'GET', // *GET, POST, PUT, DELETE, etc.
+            mode: 'cors', // no-cors, *cors, same-origin
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization':`Bearer ${token}`
+              // 'Content-Type': 'application/x-www-form-urlencoded',
+            }
+          })
+        if(!res.ok)
+            return {error:true}
+        
+        return await res.json()
+    }
+
 
     checkDataForErrors = (data) => {
         
@@ -104,6 +121,13 @@ export default class WebStorageService {
     getVideoset = async (id) =>{
         const videoset = await this.getResourse(`/videoset/${id}`)
         return this._transformItem(videoset)
+    }
+
+
+    getVideosOfVideoset = async (id) => {
+        const videos = await this.getResourse(`/videos?videosetId=${id}`)
+        console.log(videos)
+        return videos.map(this._transformItem)
     }
 
     _transformItem = (item) => {

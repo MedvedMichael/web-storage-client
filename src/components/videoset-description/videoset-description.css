@@ -1,8 +1,30 @@
 .videoset-description h3 {
     margin-left: 2.5rem;
-    margin-top: 1rem;
+    margin-top: 0rem;
+    padding-bottom: 1rem;
 }
 .videoset-description span {
     font-size: 20px;
     margin-left: 1.5rem;
+}
+
+.videoset-description .card-body{
+    margin-top: -.75rem;
+
+}
+
+.change-btn {
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding-bottom: .5rem;
+
+}
+
+.save-btn{
+    margin-top: .5rem;
+    margin-right: .25rem;
+}
+.edit-text-area{
+    font-size: x-large;
 }

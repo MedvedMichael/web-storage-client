@@ -43,15 +43,6 @@ export default class CategoryPage extends Component {
             </ul>)
     }
 
-    // renderRedirect = () => {
-    //     if (this.state.redirectTo) {
-    //         const history = useHistory()
-    //         history.push(this.state.redirectTo)
-    //         return <Redirect to={this.state.redirectTo} />
-    //     }
-    // }
-
-
 
     
     renderVideosets = (videosets) => {
