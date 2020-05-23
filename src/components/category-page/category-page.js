@@ -114,7 +114,7 @@ const Row = ({ left, right }) => {
 
 const VideosetCard = ({ id, name, description }) => {
 
-    const pathToVideoset = `/videosets/${id}`
+    const pathToVideoset = `/edit-videoset/${id}`
     const history = useHistory()
     return (
         <div key={id} className="videoset-card card border-success"
@@ -122,7 +122,7 @@ const VideosetCard = ({ id, name, description }) => {
                 history.push(pathToVideoset)
             }} >
             <div className="card-header">
-                <h4>
+                <h4 className="videoset-preview-title">
                     <Link to={pathToVideoset}>{name}</Link>
                 </h4>
             </div>

@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route } from 'react-router-dom'
 import Header from '../header/header'
-import VideosetPage from '../videoset-page/videoset-page'
+import VideosetEditorPage from '../videoset-editor-page/videoset-editor-page'
+import VideosetPage from '../videoset-page/videoset-page.jsx'
 import CategoryPage from '../category-page/category-page'
 import LoginPage from '../login-page/login-page';
 
@@ -41,6 +42,11 @@ class App extends Component {
                         render={({ match }) => {
 
                             return <VideosetPage id={match.params.id} /> //TODO
+                        }} />
+                    <Route path="/edit-videoset/:id"
+                        render={({ match }) => {
+
+                            return <VideosetEditorPage id={match.params.id} /> //TODO
                         }} />
 
                 </Router>

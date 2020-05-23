@@ -1,26 +1,36 @@
 import React, { Component } from 'react';
-import WebStorageService from '../../services/web-storage-service';
+// import WebStorageService from '../../services/web-storage-service';
 import './picture-slider.css'
 import Spinner from '../spinner/spinner';
 export default class PictureSlider extends Component {
 
-    webStorageService = new WebStorageService()
-
     state = {
         slides: null,
         slideIndex:null,
-        currentSlide:null
+        editable:false
     }
 
+   
     componentDidMount() {
-        const { dataURLs } = this.props
-        if(!dataURLs)
-            return
-        const slides = dataURLs.map((path) => {
+        // const { dataURLs, editable } = this.props
+        // const slides = (dataURLs)? dataURLs.map((path) => {
+        //     return (<SlideView key={path} path={path} />)
+        // }):null 
+        // this.setState({ slides, slideIndex: 0, editable: (editable) ? editable : false })
+        this.initSlides()
+
+    }
+
+    initSlides = () => {
+        const { dataURLs, editable, slideIndex } = this.props
+    
+
+        const slides = (dataURLs)? dataURLs.map((path) => {
+            const img = document.createElement('img');
+            img.src = path;
             return (<SlideView key={path} path={path} />)
-        });
-        this.setState({ slides, slideIndex:0})
-        
+        }):null 
+        this.setState({ slides, slideIndex: (slideIndex && slideIndex >= 0) ? slideIndex : 0, editable: (editable) ? editable : false })
     }
 
     changeSlideIndex = (number) => {
@@ -51,12 +61,50 @@ export default class PictureSlider extends Component {
         this.changeSlideIndex(index - slideIndex)
     }
 
+    onPictureAdded = async ({files}) =>  {
+        // console.log(files[0])
+        const { uploadingPicture } = this.props
+        for(let i=0;i<files.length;i++)
+           await uploadingPicture(this.props.id, this.state.slideIndex, files[i])
+    }
+
+    onPictureDeleted = () => {
+        const {slides, slideIndex} = this.state
+        const slide = slides[slideIndex]
+        this.props.deletingPicture(this.props.id, slideIndex,slide.props.path)
+
+    }
+
+    componentDidUpdate = (prevProps) => {
+        if(prevProps.dataURLs !== this.props.dataURLs){
+            this.initSlides()
+        }
+    }
 
     render() {
-        const { slides, slideIndex } = this.state
-        if (!slides)
-            return <h3 className="error-message">There's no content</h3>;
+        const { slides, slideIndex, editable } = this.state
 
+        const addPictureButton = (editable)?(
+            <div>
+                <label htmlFor="file-upload" className="btn btn-outline-success custom-file">
+                    Upload pictures
+                </label>
+                <input multiple="multiple" onChange={({target})=>this.onPictureAdded(target)} id="file-upload" type="file" className="custom-file-input" />
+            </div>
+        ):null
+        console.log(editable)
+        if (!slides || slides.length === 0)
+            return (
+                <div>
+                    <h3 className="error-message">There's no content</h3>
+                    <div className="add-delete-btn-container">
+                        <div className="add-delete-btn-group btn-group">
+                            {addPictureButton}
+                        </div>
+                    </div>
+                </div>);
+
+        
         if(!slides[slideIndex])
             return <Spinner />
         
@@ -65,6 +113,17 @@ export default class PictureSlider extends Component {
             const isActive = index === slideIndex
             return <DotView isActive={isActive} id={index} onClick={this.onDotClick} key={"dot" + index}/>
         });
+
+        const addAndDeleteButtonGroup = (editable) ? (
+            <div className="add-delete-btn-container">
+                <div className="add-delete-btn-group btn-group">
+                    {addPictureButton}
+                    <button type="button" className="btn btn-outline-danger" onClick={()=>this.onPictureDeleted()}>Delete picture</button>
+                </div>
+            </div>) : null
+
+
+        
 
         return (
             <div className="content">
@@ -81,7 +140,8 @@ export default class PictureSlider extends Component {
                     <div className="slider-dots">
                         {dots}
                     </div>
-
+                    {addAndDeleteButtonGroup}
+                    
                 </div>
             </div>
         );

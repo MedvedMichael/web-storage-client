@@ -121,3 +121,16 @@
     width: 18px;
   }
   
+
+  input[type="file"] {
+    display: none;
+}
+
+.add-delete-btn-group{
+  margin: 0 auto;
+}
+.add-delete-btn-container{
+  margin-top: 2rem;
+  display: flex;
+  padding-bottom: 1rem;
+}

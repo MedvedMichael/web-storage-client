@@ -1,6 +1,5 @@
 .draggable-box{
     margin-top: 0.5rem;
-    border-radius: 1rem;
 }
 
 .delete-item-button{
@@ -8,4 +7,3 @@
     margin-right: .5rem;
     margin-top: .25rem;
 }
-
