@@ -9,6 +9,10 @@ class VideosetDescription extends Component{
         editStatus:false
     }
 
+    getText = () => {
+        return this.state.text
+    }
+
     componentDidMount = () => {
         const {text, editable} = this.props
 
@@ -23,8 +27,8 @@ class VideosetDescription extends Component{
 
     onSaveClick = () => {
         const {editableText} = this.state
-
         this.setState({text:editableText,editStatus:false})
+        this.props.saveDescription(this.props.id, editableText)
     }
 
     onChangeClick = () => {

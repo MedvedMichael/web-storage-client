@@ -22,3 +22,13 @@
     top: 0px; left: 0px; 
     will-change: transform;
 }
+
+.editor-bar-buttons{
+    margin-top: .75rem;
+    margin-left: auto;
+    margin-right: .5rem;
+}
+
+.add-dropdown{
+    margin-top: .5rem;
+}

@@ -23,6 +23,13 @@ class EditorBar extends Component {
         this.onDropdownMenuClick()
     }
 
+    onSaveChangesButtonClick = () => {
+        this.props.saveChanges()
+    }
+    onCancelButtonClick = () => {
+        this.props.cancelAction()
+    }
+
     render() {
 
         const { isDropdownMenuOpened, videosetItems } = this.state
@@ -38,11 +45,17 @@ class EditorBar extends Component {
             <div className="editor-bar-container">
                 <div className="card editor-bar">
                     <ul className="nav nav-pills">
-                        <li className="nav-item dropdown">
+                        <li className="nav-item dropdown add-dropdown">
                             <h4 className="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"
                                 onClick={() => this.onDropdownMenuClick()}>Add item</h4>
                             <div className={dropdownMenuStyle} x-placement="bottom-start">
                                 {dropdownElements}
+                            </div>
+                        </li>
+                        <li className="nav-item editor-bar-buttons">
+                            <div className="btn-group">
+                                <button className="btn btn-outline-success" onClick={this.onSaveChangesButtonClick}>Save changes</button>
+                                <button className="btn btn-outline-danger" onClick={this.onCancelButtonClick}>Cancel</button>
                             </div>
                         </li>
 

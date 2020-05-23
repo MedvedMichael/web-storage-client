@@ -9,11 +9,13 @@ export default class WebStorageService {
         return await res.json()
     }
 
+
+
     postPictures = async (id, file) => {
         console.log(file)
         const token = localStorage.getItem('token')
         const data = { source: 'local' }
-        const res = await fetch(`${this._apiBase}/picture?videosetId=${id}`, {
+        const res = await fetch(`${this._apiBase}/picture?pictureSliderId=${id}`, {
             method: 'POST', // *GET, POST, PUT, DELETE, etc.
             mode: 'cors', // no-cors, *cors, same-origin
             headers: {
@@ -24,9 +26,10 @@ export default class WebStorageService {
             body: JSON.stringify(data) // body data type must match "Content-Type" header
         })
         
-        if (!res.ok)
+        if (!res.ok){
+            console.log(res)
             return { error: true }
-
+        }
         const temp = await res.json();
         console.log(temp)
         const pictureId = temp._id;
@@ -56,6 +59,29 @@ export default class WebStorageService {
         
         return { ok: true }
 
+    }
+
+    postSlider = async (videosetId) => {
+        const token = localStorage.getItem('token')
+        const res = await fetch(`${this._apiBase}/picture-slider?videosetId=${videosetId}`, {
+            method: 'POST', // *GET, POST, PUT, DELETE, etc.
+            mode: 'cors', // no-cors, *cors, same-origin
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization':`Bearer ${token}`
+                // 'Content-Type': 'application/x-www-form-urlencoded',
+            }
+            // body: JSON.stringify(data) // body data type must match "Content-Type" header
+        })
+
+        if(!res.ok){
+            console.log(res)
+            return {error:true}
+        }
+
+
+        const slider = await res.json();
+        return this._transformItem(slider)
     }
 
     patchVideoset = async (id, props) => {
@@ -97,8 +123,8 @@ export default class WebStorageService {
 
     }
 
-    getPicturesOfVideoset = async (id) => {
-        const pictures = await this.getResourse(`/pictures?videosetId=${id}`)
+    getPicturesOfSlider = async (id) => {
+        const pictures = await this.getResourse(`/pictures?pictureSliderId=${id}`)
         return pictures.map(picture => `${this._apiBase}/picture/${picture._id}`)
     }
 
