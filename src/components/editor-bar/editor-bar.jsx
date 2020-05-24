@@ -30,6 +30,10 @@ class EditorBar extends Component {
         this.props.cancelAction()
     }
 
+    onChangeTitleButtonClick = () => {
+        this.props.changeTitle()
+    }
+
     render() {
 
         const { isDropdownMenuOpened, videosetItems } = this.state
@@ -40,7 +44,7 @@ class EditorBar extends Component {
             (<div key={`add ${element}`}>
                 <span className="dropdown-item" onClick={() => this.onDropdownItemClick(element)}>{element}</span>
             </div>))
-
+        const changeTitle = <button type="button" className="change-title btn btn-secondary" onClick={this.onChangeTitleButtonClick}>Change title</button>
         return (
             <div className="editor-bar-container">
                 <div className="card editor-bar">
@@ -51,6 +55,9 @@ class EditorBar extends Component {
                             <div className={dropdownMenuStyle} x-placement="bottom-start">
                                 {dropdownElements}
                             </div>
+                        </li>
+                        <li>
+                            {changeTitle}
                         </li>
                         <li className="nav-item editor-bar-buttons">
                             <div className="btn-group">

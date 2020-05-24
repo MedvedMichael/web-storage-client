@@ -52,5 +52,8 @@
     border-radius:.5rem
 }
 
+.no-content-message {
+    padding-bottom: 1rem;
+}
 
 

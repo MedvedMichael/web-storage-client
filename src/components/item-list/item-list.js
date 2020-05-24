@@ -12,12 +12,23 @@ export default class ItemList extends Component {
   }
 
   componentDidMount() {
-    const { getData } = this.props
-    getData().then((itemList) => {
-      this.setState({ itemList })
-    })
+    console.log(this.props)
+    const { itemList } = this.props
+    console.log(itemList)
+    this.setState({ itemList })
+    
   }
 
+  componentDidUpdate = (prevProps) =>{
+    if(prevProps.itemList!== this.props.itemList)
+    this.updateList()
+  }
+  updateList = () => {
+    const { itemList } = this.props
+    this.setState({ itemList })
+  }
+
+  onItemSelected = (item) => this.props.onItemSelected(item)
 
 
   render() {
@@ -25,13 +36,17 @@ export default class ItemList extends Component {
     const { itemList } = this.state
     if (!itemList)
       return <Spinner />
+    
+    console.log(itemList)
 
-    const itemViews = itemList.map(({ name, id }) => {
+    const itemViews = itemList.map((item) => {
+      const { name, id } = item
       // console.log(`Id ${name}`)
       return (
         <li className="list-group-item"
           key={id}
-          onClick={() => this.props.onItemSelected(id)}>{name}</li>
+          onClick={() => this.props.onItemSelected(item)}>{name}
+        </li>
       )
     })
     return (

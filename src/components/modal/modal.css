@@ -1,0 +1,19 @@
+.display-block{
+    display: block;
+}
+
+.display-none {
+    display: none;
+}
+
+.modal-backdrop{
+    background-color: rgba(1, 1, 1, 0.5);
+}
+
+.video-modal {
+    margin-top: 5rem;
+}
+.modal-body {
+    display: flex;
+    margin: 0 auto;
+}

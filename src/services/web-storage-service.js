@@ -9,9 +9,51 @@ export default class WebStorageService {
         return await res.json()
     }
 
+    postCategory = async (name) => {
+        const data = {name}
+        const token = localStorage.getItem('token')
+        const res = await fetch(`${this._apiBase}/categories`, {
+            method: 'POST', // *GET, POST, PUT, DELETE, etc.
+            mode: 'cors', // no-cors, *cors, same-origin
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization':`Bearer ${token}`
+                // 'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: JSON.stringify(data) // body data type must match "Content-Type" header
+        })
+        if (!res.ok){
+            console.log(res)
+            return { error: true }
+        }
+
+        return await res.json()
+    }
+
+    postSubcategory = async (name, type, categoryId) => {
+        const data = {name, type}
+        const token = localStorage.getItem('token')
+        const res = await fetch(`${this._apiBase}/subcategories?categoryId=${categoryId}`, {
+            method: 'POST', // *GET, POST, PUT, DELETE, etc.
+            mode: 'cors', // no-cors, *cors, same-origin
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization':`Bearer ${token}`
+                // 'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: JSON.stringify(data) // body data type must match "Content-Type" header
+        })
+        if (!res.ok){
+            console.log(res)
+            return { error: true }
+        }
+
+        return await res.json()
+    }
 
 
-    postPictures = async (id, file) => {
+
+    postPicture = async (id, file) => {
         console.log(file)
         const token = localStorage.getItem('token')
         const data = { source: 'local' }
@@ -61,6 +103,59 @@ export default class WebStorageService {
 
     }
 
+    postVideo = async (id, name, file) => {
+        console.log(file)
+        const token = localStorage.getItem('token')
+        const data = { source: 'local', name }
+        const res = await fetch(`${this._apiBase}/video?videosContainerId=${id}`, {
+            method: 'POST', // *GET, POST, PUT, DELETE, etc.
+            mode: 'cors', // no-cors, *cors, same-origin
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization':`Bearer ${token}`
+                // 'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: JSON.stringify(data) // body data type must match "Content-Type" header
+        })
+        
+        if (!res.ok){
+            console.log(res)
+            return { error: true }
+        }
+        const temp = await res.json();
+        // console.log(temp)
+        const videoId = temp._id;
+
+        const formData = new FormData()
+        formData.append('image', file)
+        
+        const uploadingVideo = await fetch(`${this._apiBase}/video/upload/${videoId}`, {
+            method: 'POST', // *GET, POST, PUT, DELETE, etc.
+            mode: 'cors', // no-cors, *cors, same-origin
+            headers: {
+                'Authorization':`Bearer ${token}`
+                // 'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: formData, // body data type must match "Content-Type" header,
+            onUploadProgress: progressEvent => {
+                let complete = (progressEvent.loaded / progressEvent.total * 100 | 0) + '%'
+                console.log('complete: ', complete)
+              }
+        })
+
+
+        console.log(uploadingVideo)
+        if (!uploadingVideo.ok)
+            return { error: true }
+
+        
+        return { ok: true }
+
+    }
+
+
+
+
     postSlider = async (videosetId) => {
         const token = localStorage.getItem('token')
         const res = await fetch(`${this._apiBase}/picture-slider?videosetId=${videosetId}`, {
@@ -82,6 +177,69 @@ export default class WebStorageService {
 
         const slider = await res.json();
         return this._transformItem(slider)
+    }
+
+    postVideosContainer = async (videosetId) => {
+        const token = localStorage.getItem('token')
+        const res = await fetch(`${this._apiBase}/videos-container?videosetId=${videosetId}`, {
+            method: 'POST', // *GET, POST, PUT, DELETE, etc.
+            mode: 'cors', // no-cors, *cors, same-origin
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization':`Bearer ${token}`
+                // 'Content-Type': 'application/x-www-form-urlencoded',
+            }
+            // body: JSON.stringify(data) // body data type must match "Content-Type" header
+        })
+
+        if(!res.ok){
+            console.log(res)
+            return {error:true}
+        }
+
+
+        const videosContainer = await res.json();
+        return this._transformItem(videosContainer)
+    }
+
+    deleteSlider = async (id) => {
+        const token = localStorage.getItem('token')
+        const res = await fetch(`${this._apiBase}/picture-slider?id=${id}`, {
+            method: 'DELETE', // *GET, POST, PUT, DELETE, etc.
+            mode: 'cors', // no-cors, *cors, same-origin
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization':`Bearer ${token}`
+                // 'Content-Type': 'application/x-www-form-urlencoded',
+            }
+            // body: JSON.stringify(data) // body data type must match "Content-Type" header
+        })
+        console.log(res)
+        if(!res.ok)
+        return {error:true}
+
+        return await res.json()
+
+    }
+
+    deleteVideosContainer = async (id) => {
+        const token = localStorage.getItem('token')
+        const res = await fetch(`${this._apiBase}/videos-container?id=${id}`, {
+            method: 'DELETE', // *GET, POST, PUT, DELETE, etc.
+            mode: 'cors', // no-cors, *cors, same-origin
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization':`Bearer ${token}`
+                // 'Content-Type': 'application/x-www-form-urlencoded',
+            }
+            // body: JSON.stringify(data) // body data type must match "Content-Type" header
+        })
+        console.log(res)
+        if(!res.ok)
+        return {error:true}
+
+        return await res.json()
+
     }
 
     patchVideoset = async (id, props) => {
@@ -107,6 +265,25 @@ export default class WebStorageService {
     deletePhoto = async (id) => {
         const token = localStorage.getItem('token')
         const res = await fetch(`${this._apiBase}/picture?id=${id}`, {
+            method: 'DELETE', // *GET, POST, PUT, DELETE, etc.
+            mode: 'cors', // no-cors, *cors, same-origin
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization':`Bearer ${token}`
+                // 'Content-Type': 'application/x-www-form-urlencoded',
+            }
+            // body: JSON.stringify(props) // body data type must match "Content-Type" header
+        })
+
+        if(!res.ok) return {error:true}
+
+        return await res.json()
+
+    }
+
+    deleteVideo = async (id) => {
+        const token = localStorage.getItem('token')
+        const res = await fetch(`${this._apiBase}/video?id=${id}`, {
             method: 'DELETE', // *GET, POST, PUT, DELETE, etc.
             mode: 'cors', // no-cors, *cors, same-origin
             headers: {
@@ -245,8 +422,8 @@ export default class WebStorageService {
     }
 
 
-    getVideosOfVideoset = async (id) => {
-        const videos = await this.getResourse(`/videos?videosetId=${id}`)
+    getVideosOfVideosContainer = async (id) => {
+        const videos = await this.getResourse(`/videos?videosContainerId=${id}`)
         console.log(videos)
         return videos.map(this._transformItem)
     }

@@ -50,9 +50,9 @@ class Header extends Component {
 
         return (
             <div className="header d-flex">
-                <h1>
+                <div className="web-storage-title">
                     <Link to="/">Web Storage</Link>
-                </h1>
+                </div>
                 {userCard}
 
             </div>

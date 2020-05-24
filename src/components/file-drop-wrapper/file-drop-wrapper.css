@@ -1,0 +1,11 @@
+.drop-area .highlight {
+    border-width:1px;
+  }
+
+.drop-area {
+    border-radius: 1rem;
+    /* border-width: 1px; */
+    margin-left: 1rem;
+    margin-right: 1rem;
+    margin-bottom: .5rem;
+}
