@@ -34,6 +34,10 @@ class EditorBar extends Component {
         this.props.changeTitle()
     }
 
+    onDeleteVideosetClickButton = () => {
+        this.props.deleteVideoset()
+    }
+
     render() {
 
         const { isDropdownMenuOpened, videosetItems } = this.state
@@ -44,7 +48,8 @@ class EditorBar extends Component {
             (<div key={`add ${element}`}>
                 <span className="dropdown-item" onClick={() => this.onDropdownItemClick(element)}>{element}</span>
             </div>))
-        const changeTitle = <button type="button" className="change-title btn btn-secondary" onClick={this.onChangeTitleButtonClick}>Change title</button>
+        const changeTitle = <button type="button" className="change-title btn btn-primary" onClick={this.onChangeTitleButtonClick}>Change title</button>
+        const deleteVideosetButton = <button type="button" className="change-title btn btn-danger" onClick={this.onDeleteVideosetClickButton}>Delete videoset</button>
         return (
             <div className="editor-bar-container">
                 <div className="card editor-bar">
@@ -57,7 +62,10 @@ class EditorBar extends Component {
                             </div>
                         </li>
                         <li>
-                            {changeTitle}
+                            <div className="btn-group">
+                                {changeTitle}
+                                {deleteVideosetButton}
+                            </div>
                         </li>
                         <li className="nav-item editor-bar-buttons">
                             <div className="btn-group">

@@ -22,3 +22,15 @@
 .video-card .card-body {
     padding: 0%;
 }
+
+.video-uploading-modal-card {
+    display: flex;
+  align-items: center
+    
+}
+
+.video-uploading-text{
+    padding: 5rem;
+    padding: 5rem 16rem;
+}
+

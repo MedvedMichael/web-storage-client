@@ -56,4 +56,8 @@
     padding-bottom: 1rem;
 }
 
-
+.add-button {
+    position: relative;
+    display: block;
+    box-sizing: border-box;
+}

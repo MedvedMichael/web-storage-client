@@ -3,7 +3,6 @@ import React, { Component } from 'react';
 import { Link, useHistory } from 'react-router-dom'
 import WebStorageService from '../../services/web-storage-service'
 import ItemList from '../item-list/item-list'
-import ItemDetails from '../item-details/item-details'
 import './category-page.css'
 export default class CategoryPage extends Component {
 
@@ -13,7 +12,8 @@ export default class CategoryPage extends Component {
         selectedCategory: null,
         selectedSubcategory: null,
         categories:null,
-        subcategories:null
+        subcategories:null,
+        videosets:null
     }
 
     componentDidMount = async () => {
@@ -24,27 +24,10 @@ export default class CategoryPage extends Component {
         await this.updateSubcategories(selectedCategory)
     }
 
-    onSubcategorySelected = (selectedSubcategory) => {
-        this.setState({ selectedSubcategory })
+    onSubcategorySelected = async (selectedSubcategory) => {
+        await this.updateVideosets(selectedSubcategory)
     }
-    // renderSubcategories = (subcategories) => {
-    //     return (
-    //         <ItemDetails itemList={subcategories} onItemSelected={this.onSubcategorySelected}/>
-    //         // <ul className="subcategories-list item-list list-group">
-    //         //     {subcategories.map(({ id, name }) => {
-    //         //         return (
-    //         //             <li className="list-group-item"
-    //         //                 key={id}
-    //         //                 onClick={() => { this.onSubcategorySelected(id) }}>
-    //         //                 {name}
-    //         //             </li>
-    //         //         )
-    //         //     })}
-    //         // </ul>)
-    //     )}
 
-
-    
     renderVideosets = (videosets) => {
         const videosetsCards = videosets.map((props,index) => {
             const key = `VideosetCard-${index}`
@@ -52,16 +35,9 @@ export default class CategoryPage extends Component {
                 <VideosetCard key={key} {...props}/>
             )
         })
-
-
-
         return (
             <div className="videosets-container container">
-                {/* <ul className="list-group"> */}
-
                 {videosetsCards}
-
-                {/* </ul> */}
             </div>
         )
     }
@@ -74,8 +50,16 @@ export default class CategoryPage extends Component {
 
     addSubcategory = async () => {
         const name = prompt('Input name of category', '')
-        await this.webStorageService.postSubcategory(name, 'text', this.state.selectedCategory)
-        await this.updateSubcategories()
+        await this.webStorageService.postSubcategory(name, 'text', this.state.selectedCategory.id)
+        await this.updateSubcategories(this.state.selectedCategory)
+    }
+
+    
+
+    deleteCategory = async () => {
+        this.setState({selectedCategory:null,selectedSubcategory:null})
+        //TODO
+        await this.updateCategories()
     }
 
 
@@ -98,25 +82,40 @@ export default class CategoryPage extends Component {
 
     }
 
+    updateVideosets = async (selectedSubcategory) => {
+        if (!selectedSubcategory)
+            return
+
+        const videosets = await this.webStorageService.getVideosetsOfSubcategory(selectedSubcategory.id)
+        this.setState({selectedSubcategory,videosets})
+    }
+
     render () {
-        const {categories, subcategories, selectedCategory} = this.state
+        const {categories, subcategories, videosets, selectedCategory, selectedSubcategory} = this.state
         
         // const onNullText = <h4 className='select-message'>Select the category</h4>
 
         const userString = localStorage.getItem('user')
-        // console.log(userString)
+        console.log()
+
         // console.log(userString === undefined)
-        const user = (userString) ? JSON.parse(userString) : null
-        const successButton = (name, onClick) => (
+        const user = (userString && userString!=='undefined') ? JSON.parse(userString) : null
+        const ColorButton = ({className,children, onClick}) => (
             // <div className="add-delete-btn-group btn-group">
-                <button type="button" className="btn btn-outline-success" onClick={onClick}>{name}</button>
+                <button type="button" className={`btn btn-outline-${className}`} onClick={onClick}>{children}</button>
             // 
             )
-        const addCategoryButton = (user && user.status.endsWith('admin'))
-            ?successButton('Add category', () => this.addCategory()):null
+        const addCategoryButton = (user && user.status === 'main-admin')
+            ?<ColorButton className="success" onClick={() => this.addCategory()}>Add category</ColorButton>:null
 
-        const addSubcategoryButton = (user && user.status.endsWith('admin'))
-            ?successButton('Add subcategory', () => this.addSubcategory()):null
+        const addSubcategoryButton = (user && user.status === 'main-admin')
+            ?<ColorButton className="success" onClick={() => this.addSubcategory()}>Add subcategory</ColorButton>:null
+
+        const deleteCategoryButton = (user && user.status === 'main-admin')
+            ?<ColorButton className="danger" onClick={() => this.deleteCategory()}>Delete this category</ColorButton>:null
+
+        const addVideosetButton = (user && user.status.endsWith('admin'))
+            ?<ColorButton className="success" onClick={() => this.addSubcategory()}>Add subcategory</ColorButton>:null
 
 
         // console.log(subcategories)
@@ -125,6 +124,7 @@ export default class CategoryPage extends Component {
                 <div className="card-body">
                     <h4 className="all-categories-title">All Categories</h4>
                     <ItemList onItemSelected={this.onCategorySelected} itemList={categories} />
+                    {(!categories || categories.length === 0)?<h3 className='no-content-message'>Oops, there's no content</h3>:null}
                     {addCategoryButton}
                 </div>
             </div>)
@@ -140,13 +140,22 @@ export default class CategoryPage extends Component {
                     {renderCategoryTitle(selectedCategory.name)}
                     <ItemList onItemSelected={this.onSubcategorySelected} itemList={subcategories} />
                     {(!subcategories || subcategories.length === 0)?<h3 className='no-content-message'>Oops, there's no content</h3>:null}
+                    <div className="btn-group">
                     {addSubcategoryButton}
+                    {deleteCategoryButton}
+                    </div>
                 </div>
             </div>
             )
-        const renderSubcategoryTitle = (name) => <h3 className="subcategory-title">Videosets of subcategory "{name}"</h3>
-        const videosetViews = (this.state.selectedSubcategory) ? (<ItemDetails renderTitle={renderSubcategoryTitle} renderSubitems={this.renderVideosets} onSubitemSelected={() => { }} itemId={this.state.selectedSubcategory.id} getData={this.webStorageService.getSubcategory} getSubitems={this.webStorageService.getVideosetsOfSubcategory} />) : null
 
+        const renderSubcategoryTitle = (name) => <h3 className="subcategory-title">Videosets of subcategory "{name}"</h3>
+        const videosetViews = (this.state.selectedSubcategory) ? (
+            <div className="card">
+                <div className="card-body">
+                    {renderSubcategoryTitle(selectedSubcategory.name)}
+                    <ItemList itemList={videosets} renderItems={this.renderVideosets}/>
+                </div>
+            </div>) : null
         return (
             <div>
 
@@ -176,8 +185,9 @@ const Row = ({ left, right }) => {
     )
 }
 
-const VideosetCard = ({ id, name, description }) => {
-
+const VideosetCard = ({ id, name, order }) => {
+    const descriptionItem = order.find((item) => item.type === 'VideosetDescription')
+    const description = descriptionItem ? descriptionItem.value.split('\n')[0] : null
     const pathToVideoset = `/videosets/${id}`
     const history = useHistory()
     return (
@@ -191,7 +201,7 @@ const VideosetCard = ({ id, name, description }) => {
                 </h4>
             </div>
             <div className="card-body">
-                <h4 className="card-title">Description</h4>
+                <h4 className="card-title">Description:</h4>
                 <p className="card-text">{description}</p>
 
             </div>

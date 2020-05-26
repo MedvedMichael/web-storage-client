@@ -9,6 +9,7 @@ import VideosContainer from '../videos-container/videos-container';
 import VideoPlayer from '../video-player/video-player'
 import './videoset-editor-page.css'
 import Modal from '../modal/modal';
+import FileDropWrapper from '../file-drop-wrapper/file-drop-wrapper';
 
 export default class VideosetEditorPage extends Component {
 
@@ -26,7 +27,8 @@ export default class VideosetEditorPage extends Component {
         deleted: [],
         added: [],
         videoPlayer: null,
-        showModal: false
+        showModal: false,
+        showVideoUploadingModal:false
     }
 
     onDragEnd = async (result) => {
@@ -81,11 +83,12 @@ export default class VideosetEditorPage extends Component {
             const element = order[i]
             console.log("KUKU")
             if (element.type === 'VideosetDescription' && element.value !== null) {
-                await this.addItemToColumn(VideosetDescription, { text: element.value, editable: true })
+                this.addItemToColumn(VideosetDescription, { text: element.value, editable: true })
             }
             else if (element.type === 'PictureSlider' && element.value) {
                 const dataURLs = await this.webStorageService.getPicturesOfSlider(element.value)
-                await this.addItemToColumn(PictureSlider, { id: element.value, dataURLs, editable: true, uploadingPicture: this.uploadingPicture, deletingPicture: this.deletingPicture })
+                
+                this.addItemToColumn(PictureSlider, { id: element.value, dataURLs, editable: true, uploadingPicture: this.uploadingPicture, deletingPicture: this.deletingPicture })
             }
 
             else if (element.type === 'VideosContainer' && element.value) {
@@ -127,7 +130,7 @@ export default class VideosetEditorPage extends Component {
         if (res.error)
             return
 
-        this.updateVideoContainer(owner)
+        await this.updateVideoContainer(owner)
         this.setState({ showModal: false })
 
 
@@ -145,7 +148,7 @@ export default class VideosetEditorPage extends Component {
     }
 
 
-    addItemToColumn = async (ReactComponent, props = {}) => {
+    addItemToColumn = (ReactComponent, props = {}) => {
         const { itemList, counters } = this.state
 
         if (!counters[ReactComponent.name])
@@ -202,26 +205,39 @@ export default class VideosetEditorPage extends Component {
     }
 
     uploadingVideo = async (id, video) => {
+        console.log('KUKU')
         const name = prompt("Input video name: ", "Video")
         const res = await this.webStorageService.postVideo(id, name, video)
         if (!res.ok) {
             console.log(res)
             return
         }
-        this.updateVideoContainer(id)
+        await this.updateVideoContainer(id)
         // const dataURLs = await this.webStorageService.getPicturesOfSlider(this.props.id)
         // this.updateSlider(id, slideIndex)
     }
 
     updateVideoContainer = async (id) => {
-        const { itemList } = this.state
+        
+        const {itemList} = this.state
         const videos = await this.webStorageService.getVideosOfVideosContainer(id)
-
+        console.log(videos)
         const indexOfElement = itemList.findIndex((item) => item.props.id === id);
-        const newVideoContainer = <VideosContainer {...itemList[indexOfElement].props} videos={videos} />
-        itemList[indexOfElement] = newVideoContainer
+        const newProps = {...itemList[indexOfElement].props,videos}
+        itemList.splice(indexOfElement,1)
+        this.setState({itemList})
 
-        this.setState({ itemList })
+        console.log(newProps)
+        // const newVideoContainer = <VideosContainer {...newProps} />
+        this.addItemToColumn(VideosContainer,newProps)
+        const {itemList:itemList1} = this.state
+        const newItem = itemList1.pop()
+        itemList1.splice(indexOfElement,0,newItem)
+        this.setState({itemList:itemList1})
+        // itemList.push(newVideoContainer);
+        // const newItemList = [...itemList.slice(0,indexOfElement),newVideoContainer,...itemList.slice(indexOfElement+1)]
+        // this.setState({ itemList:newItemList, showModal:false })
+        // console.log(this.state.itemList)
     }
 
     onVideoClick = async (video) => {
@@ -321,6 +337,10 @@ export default class VideosetEditorPage extends Component {
         this.setState(data)
     }
 
+    deleteVideoset = () => {
+        
+    }
+
 
     render() {
         const { data, columnId, itemList, videoPlayer, showModal } = this.state
@@ -336,8 +356,15 @@ export default class VideosetEditorPage extends Component {
             </Modal>
         ) : null
 
+        // const videoUploadingModal = (showVideoUploadingModal) ?(
+        //     <Modal onClose={()=>this.setState({showVideoUploadingModal:false})} title="Uploading video">
+        //     <FileDropWrapper editable onFilesAdded={o}>
+                  
+        //     </FileDropWrapper>
+        //     </Modal>
+        // ):null
 
-
+        console.log(itemList)
 
         return (
             <div className="videoset">
@@ -347,7 +374,7 @@ export default class VideosetEditorPage extends Component {
                     {name}
                 </h1>
 
-                <EditorBar changeTitle={this.changeTitle} onVideosetElementAdded={this.onVideosetElementAdded} saveChanges={this.saveChanges} cancelAction={this.cancelAction} />
+                <EditorBar deleteVideoset={this.deleteVideoset} changeTitle={this.changeTitle} onVideosetElementAdded={this.onVideosetElementAdded} saveChanges={this.saveChanges} cancelAction={this.cancelAction} />
                 <EditorContext onDragEnd={this.onDragEnd}>
                     <VerticalColumn id={columnId} items={itemList} onItemDeleted={this.onVideosetItemDeleted} />
                 </EditorContext>

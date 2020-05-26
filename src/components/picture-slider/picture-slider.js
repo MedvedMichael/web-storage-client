@@ -128,7 +128,7 @@ export default class PictureSlider extends Component {
 
         return (
             <div className="content">
-                <FileDropWrapper editable onFilesAdded={this.onPictureAdded}>
+                <FileDropWrapper editable={editable} onFilesAdded={this.onPictureAdded}>
                     <div className="slider">
                         <div className="wrap">
                             {currentSlide}

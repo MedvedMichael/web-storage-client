@@ -34,27 +34,27 @@ export default class ItemList extends Component {
   render() {
 
     const { itemList } = this.state
+    const { renderItems, onItemSelected = () => { } } = this.props
     if (!itemList)
       return <Spinner />
     
     console.log(itemList)
 
-    const itemViews = itemList.map((item) => {
+
+    const itemViews = (!renderItems)? itemList.map((item) => {
       const { name, id } = item
       // console.log(`Id ${name}`)
       return (
         <li className="list-group-item"
           key={id}
-          onClick={() => this.props.onItemSelected(item)}>{name}
+          onClick={() => onItemSelected(item)}>{name}
         </li>
       )
-    })
+    }):renderItems(itemList)
     return (
-      
         <ul className="item-list list-group">
           {itemViews}
         </ul>
-    
     );
   }
 }
