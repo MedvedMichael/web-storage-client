@@ -3,8 +3,7 @@ import DraggableBox from '../draggable-box/draggable-box';
 
 
 const DraggableListItems = ({items,onItemDeleted}) =>{
-  console.log(items)
-  // console.log(props.items.map(toBox))
+  
   return <div> {items.map((item,position)=>toBox(item,position,onItemDeleted))} </div>
 }
 

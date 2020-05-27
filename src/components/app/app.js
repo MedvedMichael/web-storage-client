@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import { BrowserRouter as Router, Route } from 'react-router-dom'
+import { HashRouter as Router, Route } from 'react-router-dom'
 import Header from '../header/header'
 import VideosetEditorPage from '../videoset-editor-page/videoset-editor-page'
 import VideosetPage from '../videoset-page/videoset-page.jsx'
 import CategoryPage from '../category-page/category-page'
 import LoginPage from '../login-page/login-page';
+import EditUsersPage from '../edit-users-page/edit-users-page';
 
 class App extends Component {
 
@@ -34,6 +35,7 @@ class App extends Component {
                 <Router>
                     <Header user={user} onUserUpdate={()=>this.updateUser()}/>
                     <Route path="/" component={CategoryPage} exact={true} />
+                    <Route path="/users" exact={true} component={EditUsersPage}/>
                     <Route path="/login"  exact={true} 
                     render={()=>{
                         return <LoginPage onUserUpdate={()=>this.updateUser()}/>

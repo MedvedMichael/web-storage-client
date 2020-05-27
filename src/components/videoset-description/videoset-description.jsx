@@ -38,7 +38,6 @@ class VideosetDescription extends Component{
     }
     render() {
         const { editable, editableText, editStatus, text } = this.state
-        // console.log(editableText)
         const title = <h3 className="text-success"> Description: </h3>
         const textField = (
         <div className="form-group">

@@ -12,10 +12,6 @@ export default class ItemList extends Component {
   }
 
   componentDidMount() {
-    // console.log(this.props)
-    // const { itemList } = this.props
-    // // console.log(itemList)
-    // this.setState({ itemList })
     this.updateList()
   }
 
@@ -27,7 +23,6 @@ export default class ItemList extends Component {
   updateList = () => {
     const { itemList, maxNumber } = this.props
     this.setState({ itemList, maxNumber })
-    console.log(maxNumber)
   }
 
   onItemSelected = (item) => this.props.onItemSelected(item)
@@ -39,16 +34,13 @@ export default class ItemList extends Component {
     const { renderItems, onItemSelected = () => { } } = this.props
     if (!itemList)
       return <Spinner />
-    
-    console.log(itemList)
 
     const numberOfElements = maxNumber ? maxNumber : itemList.length
-
 
     const currentItemList = itemList.slice(0,numberOfElements)
     const itemViews = (!renderItems)? currentItemList.map((item) => {
       const { name, id } = item
-      // console.log(`Id ${name}`)
+      
       return (
         <li className="list-group-item"
           key={id}

@@ -63,7 +63,6 @@ export default class PictureSlider extends Component {
     }
 
     onPictureAdded = async ({ files }) => {
-        // console.log(files[0])
         const { uploadingPicture } = this.props
         for (let i = 0; i < files.length; i++)
             await uploadingPicture(this.props.id, this.state.slideIndex, files[i])
@@ -93,7 +92,7 @@ export default class PictureSlider extends Component {
                 <input multiple="multiple" onChange={({ target }) => this.onPictureAdded(target)} id="file-upload" type="file" className="custom-file-input" />
             </div>
         ) : null
-        // console.log(editable)
+        
         if (!slides || slides.length === 0)
             return (
                 <FileDropWrapper editable onFilesAdded={this.onPictureAdded}>

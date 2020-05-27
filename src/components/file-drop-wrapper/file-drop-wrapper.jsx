@@ -3,13 +3,13 @@ import './file-drop-wrapper.css'
 const FileDropWrapper = ({editable, children, onFilesAdded, extraClassName}) => {
 
     const [highlight, setHighlight] = useState(false)
-    console.log("HI" + highlight)
+    
     
     const onDragEnter = (e) => {
         e.preventDefault()
         e.stopPropagation()
         setHighlight(true)
-        console.log(highlight)
+        
     }
     const onDragOver = (e) => {
         e.preventDefault()
@@ -20,19 +20,14 @@ const FileDropWrapper = ({editable, children, onFilesAdded, extraClassName}) => 
         e.preventDefault()
         e.stopPropagation()
         setHighlight(false)
-        console.log(highlight)
     }
     const onDrop = (e) => {
         e.preventDefault()
         e.stopPropagation()
-        // console.log("drop")
         setHighlight(false)
-        // console.log(e.dataTransfer)
         
         onFilesAdded(e.dataTransfer)
     }
-
-    console.log(extraClassName)
     const className = `card drop-area ${(extraClassName&&!highlight)?extraClassName:''} ${highlight?'highlight border-success':''}`
     return (!editable) ? (<div>{children}</div>) : (
         <div className={className} onDragEnter={onDragEnter} onDragOver={onDragOver} onDragLeave={onDragLeave} onDrop={onDrop}>

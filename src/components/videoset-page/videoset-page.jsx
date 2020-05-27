@@ -40,7 +40,7 @@ export default class VideosetPage extends Component {
 
         for (let i = 0; i < order.length; i++) {
             const element = order[i]
-            console.log("KUKU")
+            
             if (element.type === 'VideosetDescription' && element.value !== null) {
                 await this.addItemToColumn(VideosetDescription, { text: element.value })
             }
@@ -68,18 +68,11 @@ export default class VideosetPage extends Component {
         const newItem = <ReactComponent key={String(ReactComponent.name) + counter} id={String(ReactComponent.name) + counter} {...props} />
         counters[ReactComponent.name] += 1
         itemList.push(newItem)
-        // console.log(newList)
-        // data.order.push(ReactComponent.name)
-
-        // data.order = []
+       
         this.setState({
             itemList,
             counters
         })
-
-        // const updating  = await this.webStorageService.patchVideoset(this.props.id,{order:data.order})
-
-        // console.log(updating)
 
     }
 
@@ -91,12 +84,11 @@ export default class VideosetPage extends Component {
             videoPlayer = <VideoPlayer video={video} url={`${this.webStorageService._apiBase}/video/${id}`} />
         }
         else {
-            const videoURL = await this.webStorageService.getResourse(`/video/${id}`)
-            videoPlayer = <VideoPlayer video={video} url={videoURL} />
+            const videoSchema = await this.webStorageService.getResourse(`/video/${id}`)
+            videoPlayer = <VideoPlayer video={video} url={videoSchema.file} />
         }
         this.setState({ videoPlayer, showModal: true })
-        console.log(videoPlayer)
-        console.log(id)
+       
     }
 
 

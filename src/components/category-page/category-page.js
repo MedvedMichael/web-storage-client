@@ -51,7 +51,7 @@ export default class CategoryPage extends Component {
 
     addSubcategory = async () => {
         const name = prompt('Input name of subcategory', '')
-        console.log(this.state.selectedCategory.id)
+        
         await this.webStorageService.postSubcategory(name, this.state.selectedCategory.id)
         await this.updateSubcategories(this.state.selectedCategory)
     }
@@ -77,9 +77,7 @@ export default class CategoryPage extends Component {
 
     updateCategories = async () => {
         const categories = await this.webStorageService.getAllCategories()
-        // console.log(categories)
         this.setState({categories})
-        // console.log(categories)
     }
 
     updateSubcategories = async (selectedCategory) => {
@@ -90,7 +88,6 @@ export default class CategoryPage extends Component {
 
         const subcategories = await this.webStorageService.getSubcategoriesOfCategory(selectedCategory.id)
         this.setState({ subcategories, selectedCategory, selectedSubcategory: null })
-        console.log(subcategories)
 
     }
 
@@ -104,9 +101,7 @@ export default class CategoryPage extends Component {
 
     showMoreVideosets = () => {
         const {numberOfVideosets} = this.state
-        console.log(numberOfVideosets)
         this.setState({numberOfVideosets:numberOfVideosets+5})
-        console.log(this.state.numberOfVideosets)
     }
 
     render () {
@@ -115,9 +110,9 @@ export default class CategoryPage extends Component {
         // const onNullText = <h4 className='select-message'>Select the category</h4>
 
         const userString = localStorage.getItem('user')
-        console.log()
+        
 
-        // console.log(userString === undefined)
+        
         const user = (userString && userString!=='undefined') ? JSON.parse(userString) : null
         const ColorButton = ({className,children, onClick}) => (
             // <div className="add-delete-btn-group btn-group">
@@ -139,7 +134,7 @@ export default class CategoryPage extends Component {
         const deleteSubcategoryButton = (user && user.status.endsWith('admin'))
             ?<ColorButton className="danger" onClick={() => this.deleteSubcategory()}>Delete this subcategory</ColorButton>:null
 
-        // console.log(subcategories)
+        
         const categoriesList = (
             <div className="card">
                 <div className="card-body">

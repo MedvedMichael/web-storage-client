@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
 import './editor-bar.css'
 import { useHistory } from 'react-router-dom';
+import WebStorageService from '../../services/web-storage-service';
 class EditorBar extends Component {
+
+    webStorageService = new WebStorageService()
 
     state = {
         isDropdownMenuOpened: false,
@@ -9,7 +12,16 @@ class EditorBar extends Component {
             PictureSlider: 'Slider',
             VideosetDescription: 'Description',
             Videos: 'Videos'
-        }
+        },
+        isDropdownSubcategoryMenuOpened:false,
+        subcategories:[],
+        videoset:null
+    }
+
+    componentDidMount = async() => {
+        const {videoset} = this.props
+        const subcategories = await this.webStorageService.getAllSubcategories()
+        this.setState({subcategories,videoset})
     }
 
 
@@ -22,6 +34,17 @@ class EditorBar extends Component {
     onDropdownItemClick = (element) => {
         this.props.onVideosetElementAdded(element)
         this.onDropdownMenuClick()
+    }
+
+    onDropdownSubcategoryMenuClick = () => {
+        const { isDropdownSubcategoryMenuOpened } = this.state
+        const newStatus = !isDropdownSubcategoryMenuOpened;
+        this.setState({ isDropdownSubcategoryMenuOpened: newStatus })
+    }
+
+    onSubcategoryItemClick = async (id) => {
+        await this.props.changeSubcategory(id)
+        this.onDropdownSubcategoryMenuClick()
     }
 
     onSaveChangesButtonClick = async () => {
@@ -41,9 +64,9 @@ class EditorBar extends Component {
 
     render() {
 
-        const { isDropdownMenuOpened, videosetItems } = this.state
+        const { isDropdownMenuOpened, isDropdownSubcategoryMenuOpened, videosetItems, subcategories } = this.state
         const dropdownMenuStyle = `dropdown-menu ${isDropdownMenuOpened ? 'show' : ''}`
-
+        const dropdownSubcategoryMenuStyle = `dropdown-menu ${isDropdownSubcategoryMenuOpened ? 'show' : ''}`
         const SaveChangesButton = ({ id,onClick }) => {
             const history = useHistory()
             const onThisClick = async () => {
@@ -65,8 +88,14 @@ class EditorBar extends Component {
         const saveChanges = (<SaveChangesButton id={this.props.id} onClick={async()=>await this.onSaveChangesButtonClick()}/>)
         const dropdownElements = Object.values(videosetItems).map((element) =>
             (<div key={`add ${element}`}>
-                <span className="dropdown-item" onClick={() => this.onDropdownItemClick(element)}>{element}</span>
+                <span className={`dropdown-item`} onClick={() => this.onDropdownItemClick(element)}>{element}</span>
             </div>))
+
+        const subcategoriesViews = (subcategories)?subcategories.map(({id, name})=>
+            (<div key={`add ${id}`}>
+                <span className={`dropdown-item ${this.state.videoset.owner === id ? 'text-info' : ''}`} onClick={() => this.onSubcategoryItemClick(id)}>{name}</span>
+            </div>
+        )):null
         const changeTitle = <button type="button" className="change-title btn btn-primary" onClick={this.onChangeTitleButtonClick}>Change title</button>
         
         const deleteVideosetButton = <DeleteVideosetButton id={this.props.id} onClick={async()=>await this.onDeleteVideosetClickButton()}/>
@@ -87,12 +116,20 @@ class EditorBar extends Component {
                                 {deleteVideosetButton}
                             </div>
                         </li>
+                        <li className="nav-item dropdown add-dropdown">
+                            <h4 className="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"
+                                onClick={() => this.onDropdownSubcategoryMenuClick()}>Select subcategory</h4>
+                            <div className={dropdownSubcategoryMenuStyle} x-placement="bottom-start">
+                                {subcategoriesViews}
+                            </div>
+                        </li>
                         <li className="nav-item editor-bar-buttons">
                             <div className="btn-group">
                                 {saveChanges}
                                 <button className="btn btn-outline-danger" onClick={this.onCancelButtonClick}>Cancel</button>
                             </div>
                         </li>
+                        
 
                     </ul>
                 </div>

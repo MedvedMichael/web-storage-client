@@ -1,13 +1,60 @@
 
 export default class WebStorageService {
-    _apiBase = 'http://localhost:3001'
+    _apiBase = 'http://localhost:3001/api'
 
     getResourse = async (url) => {
         const res = await fetch(`${this._apiBase}${url}`)
         if (!res.ok)
             throw new Error(`Could not fetch ${url}`)
+
         return await res.json()
     }
+
+    getAllSubcategories = async () => {
+        const subcategories = await this.getResourse('/subcategoriesall')
+        return subcategories.map(this._transformItem)
+    }
+
+
+    getAllUsers = async () => {
+        const token = localStorage.getItem('token')
+        const res = await fetch(`${this._apiBase}/usersall`, {
+            method: 'GET',
+            mode:'cors',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization':`Bearer ${token}`
+                // 'Content-Type': 'application/x-www-form-urlencoded',
+            }
+        })
+        
+
+        if(!res.ok){
+            return {error:true}
+        }
+
+        const users = await res.json()
+        return users.map(this._transformItem)
+    }
+
+    patchUserByMainAdmin = async (id,body) => {
+        const token = localStorage.getItem('token')
+        const res = await fetch(`${this._apiBase}/users?id=${id}`, {
+            method: 'PATCH', // *GET, POST, PUT, DELETE, etc.
+            mode: 'cors', // no-cors, *cors, same-origin
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization':`Bearer ${token}`
+                // 'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: JSON.stringify(body) // body data type must match "Content-Type" header
+        })
+        
+        if(!res.ok)
+        return {error:true}
+
+        return await res.json()
+    } 
 
     postCategory = async (name) => {
         const data = {name, isPublished:true}
@@ -23,7 +70,7 @@ export default class WebStorageService {
             body: JSON.stringify(data) // body data type must match "Content-Type" header
         })
         if (!res.ok){
-            console.log(res)
+            
             return { error: true }
         }
 
@@ -44,7 +91,7 @@ export default class WebStorageService {
             body: JSON.stringify(data) // body data type must match "Content-Type" header
         })
         if (!res.ok){
-            console.log(res)
+            
             return { error: true }
         }
 
@@ -65,7 +112,7 @@ export default class WebStorageService {
             body: JSON.stringify(data) // body data type must match "Content-Type" header
         })
         if (!res.ok){
-            console.log(res)
+            
             return { error: true }
         }
     }
@@ -73,7 +120,7 @@ export default class WebStorageService {
 
 
     postPicture = async (id, file) => {
-        console.log(file)
+        
         const token = localStorage.getItem('token')
         const data = { source: 'local' }
         const res = await fetch(`${this._apiBase}/picture?pictureSliderId=${id}`, {
@@ -88,11 +135,11 @@ export default class WebStorageService {
         })
         
         if (!res.ok){
-            console.log(res)
+            
             return { error: true }
         }
         const temp = await res.json();
-        console.log(temp)
+        
         const pictureId = temp._id;
 
         const formData = new FormData()
@@ -105,15 +152,11 @@ export default class WebStorageService {
                 'Authorization':`Bearer ${token}`
                 // 'Content-Type': 'application/x-www-form-urlencoded',
             },
-            body: formData, // body data type must match "Content-Type" header,
-            onUploadProgress: progressEvent => {
-                let complete = (progressEvent.loaded / progressEvent.total * 100 | 0) + '%'
-                console.log('complete: ', complete)
-              }
+            body: formData // body data type must match "Content-Type" header,
         })
 
 
-        console.log(uploadingPhoto)
+        
         if (!uploadingPhoto.ok)
             return { error: true }
 
@@ -123,7 +166,7 @@ export default class WebStorageService {
     }
 
     postVideo = async (id, name, file) => {
-        console.log(file)
+        
         const token = localStorage.getItem('token')
         const data = { source: 'local', name }
         const res = await fetch(`${this._apiBase}/video?videosContainerId=${id}`, {
@@ -138,11 +181,11 @@ export default class WebStorageService {
         })
         
         if (!res.ok){
-            console.log(res)
+            
             return { error: true }
         }
         const temp = await res.json();
-        // console.log(temp)
+        
         const videoId = temp._id;
 
         const formData = new FormData()
@@ -155,21 +198,38 @@ export default class WebStorageService {
                 'Authorization':`Bearer ${token}`
                 // 'Content-Type': 'application/x-www-form-urlencoded',
             },
-            body: formData, // body data type must match "Content-Type" header,
-            onUploadProgress: progressEvent => {
-                let complete = (progressEvent.loaded / progressEvent.total * 100 | 0) + '%'
-                console.log('complete: ', complete)
-              }
+            body: formData
         })
 
 
-        console.log(uploadingVideo)
+        
         if (!uploadingVideo.ok)
             return { error: true }
 
         
         return { ok: true }
 
+    }
+
+    postURLVideo = async (id, name, url) => {
+        const data = { source: 'external', name, file: url }
+        const token = localStorage.getItem('token')
+        const res = await fetch(`${this._apiBase}/video?videosContainerId=${id}`, {
+            method: 'POST', // *GET, POST, PUT, DELETE, etc.
+            mode: 'cors', // no-cors, *cors, same-origin
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization':`Bearer ${token}`
+                // 'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: JSON.stringify(data) // body data type must match "Content-Type" header
+        })
+
+        if(!res.ok)
+
+        return {error:true}
+
+        return await res.json()
     }
 
 
@@ -189,7 +249,7 @@ export default class WebStorageService {
         })
 
         if(!res.ok){
-            console.log(res)
+            
             return {error:true}
         }
 
@@ -212,7 +272,7 @@ export default class WebStorageService {
         })
 
         if(!res.ok){
-            console.log(res)
+            
             return {error:true}
         }
 
@@ -234,7 +294,7 @@ export default class WebStorageService {
             }
             // body: JSON.stringify(data) // body data type must match "Content-Type" header
         })
-        // console.log(res)
+        
         if(!res.ok)
         return {error:true}
 
@@ -274,7 +334,7 @@ export default class WebStorageService {
             body: JSON.stringify(props) // body data type must match "Content-Type" header
         })
 
-        console.log(res)
+        
         if(!res.ok)
         return {error:true}
 
@@ -414,7 +474,6 @@ export default class WebStorageService {
 
     getVideosOfVideosContainer = async (id) => {
         const videos = await this.getResourse(`/videos?videosContainerId=${id}`)
-        console.log(videos)
         return videos.map(this._transformItem)
     }
 

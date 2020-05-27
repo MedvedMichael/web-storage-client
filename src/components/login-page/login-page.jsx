@@ -27,7 +27,6 @@ export default class LoginPage extends Component {
         
         this.setState({onRegisterErrorMessage:null})
         const { user, token } = data
-        // console.log(JSON.stringify(user))
         localStorage.setItem('user', JSON.stringify(user));
         localStorage.setItem('token', token);
 
@@ -41,13 +40,13 @@ export default class LoginPage extends Component {
 
         
         const data = await this.webStorageService.registerByCredentials(registerName, registerNickname, registerEmail, registerPassword)
-        // console.log(user, token)
+        
         if (data.error) {
             return this.setState({onRegisterErrorMessage:data.error})
         }
         this.setState({onRegisterErrorMessage:null})
         const { user, token } = data
-        // console.log(JSON.stringify(user))
+        
         localStorage.setItem('user', JSON.stringify(user));
         localStorage.setItem('token', token);
 
