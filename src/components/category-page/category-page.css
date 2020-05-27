@@ -8,7 +8,7 @@
 }
 .videoset-views {
     padding-top: 2.5rem;
-    padding-bottom: 5rem;
+    padding-bottom: 2.5rem;
 }
 
 .row-item{
@@ -60,4 +60,15 @@
     position: relative;
     display: block;
     box-sizing: border-box;
+}
+
+.category-details-buttons{
+    display: flex;
+}
+
+
+
+.add-videoset-button{
+    margin-left: auto;
+    margin-right: 1.5rem;
 }

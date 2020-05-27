@@ -93,7 +93,7 @@ export default class VideosetEditorPage extends Component {
 
             else if (element.type === 'VideosContainer' && element.value) {
                 const videos = await this.webStorageService.getVideosOfVideosContainer(element.value)
-                await this.addItemToColumn(VideosContainer, { id: element.value, videos, editable: true, onVideoClick: this.onVideoClick, uploadingVideo: this.uploadingVideo })
+                await this.addItemToColumn(VideosContainer, { id: element.value, videos, updateContainer:this.updateContainer, editable: true, onVideoClick: this.onVideoClick, uploadingVideo: this.uploadingVideo })
             }
         }
 
@@ -193,7 +193,7 @@ export default class VideosetEditorPage extends Component {
                 ReactComponentName = VideosContainer
                 const videosContainer = await this.webStorageService.postVideosContainer(this.props.id)
                 const videos = await this.webStorageService.getVideosOfVideosContainer(videosContainer.id)
-                props = { id: videosContainer.id, videos, uploadingVideo: this.uploadingVideo, onVideoClick: this.onVideoClick, editable: true }
+                props = { id: videosContainer.id, videos, updateContainer:this.updateContainer, uploadingVideo: this.uploadingVideo, onVideoClick: this.onVideoClick, editable: true }
                 break
 
             default: return
@@ -212,9 +212,13 @@ export default class VideosetEditorPage extends Component {
             console.log(res)
             return
         }
-        await this.updateVideoContainer(id)
+        // await this.updateVideoContainer(id)
         // const dataURLs = await this.webStorageService.getPicturesOfSlider(this.props.id)
         // this.updateSlider(id, slideIndex)
+    }
+
+    updateContainer = async (id) => {
+        await this.updateVideoContainer(id)
     }
 
     updateVideoContainer = async (id) => {
@@ -300,6 +304,7 @@ export default class VideosetEditorPage extends Component {
         data.order = order
         const updating = await this.webStorageService.patchVideoset(this.props.id, { order, name:data.name })
 
+        console.log(deleted)
         if (deleted.length !== 0) {
             console.log(deleted)
             for (let i = 0; i < deleted.length; i++) {
@@ -336,11 +341,10 @@ export default class VideosetEditorPage extends Component {
         data.name = newTitle
         this.setState(data)
     }
-
-    deleteVideoset = () => {
-        
+    
+    deleteVideoset = async () => {
+        await this.webStorageService.deleteVideoset(this.state.data.id)
     }
-
 
     render() {
         const { data, columnId, itemList, videoPlayer, showModal } = this.state
@@ -374,7 +378,7 @@ export default class VideosetEditorPage extends Component {
                     {name}
                 </h1>
 
-                <EditorBar deleteVideoset={this.deleteVideoset} changeTitle={this.changeTitle} onVideosetElementAdded={this.onVideosetElementAdded} saveChanges={this.saveChanges} cancelAction={this.cancelAction} />
+                <EditorBar id={data.id} deleteVideoset={this.deleteVideoset} changeTitle={this.changeTitle} onVideosetElementAdded={this.onVideosetElementAdded} saveChanges={this.saveChanges} cancelAction={this.cancelAction} />
                 <EditorContext onDragEnd={this.onDragEnd}>
                     <VerticalColumn id={columnId} items={itemList} onItemDeleted={this.onVideosetItemDeleted} />
                 </EditorContext>

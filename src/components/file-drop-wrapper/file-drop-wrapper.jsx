@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import './file-drop-wrapper.css'
-const FileDropWrapper = ({editable, children, onFilesAdded}) => {
+const FileDropWrapper = ({editable, children, onFilesAdded, extraClassName}) => {
 
     const [highlight, setHighlight] = useState(false)
     console.log("HI" + highlight)
@@ -32,7 +32,8 @@ const FileDropWrapper = ({editable, children, onFilesAdded}) => {
         onFilesAdded(e.dataTransfer)
     }
 
-    const className = `card drop-area ${highlight?'highlight border-success':''}`
+    console.log(extraClassName)
+    const className = `card drop-area ${(extraClassName&&!highlight)?extraClassName:''} ${highlight?'highlight border-success':''}`
     return (!editable) ? (<div>{children}</div>) : (
         <div className={className} onDragEnter={onDragEnter} onDragOver={onDragOver} onDragLeave={onDragLeave} onDrop={onDrop}>
             {children}

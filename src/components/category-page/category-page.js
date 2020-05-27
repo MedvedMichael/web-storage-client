@@ -13,7 +13,8 @@ export default class CategoryPage extends Component {
         selectedSubcategory: null,
         categories:null,
         subcategories:null,
-        videosets:null
+        videosets:null,
+        numberOfVideosets:5
     }
 
     componentDidMount = async () => {
@@ -49,17 +50,28 @@ export default class CategoryPage extends Component {
     }
 
     addSubcategory = async () => {
-        const name = prompt('Input name of category', '')
-        await this.webStorageService.postSubcategory(name, 'text', this.state.selectedCategory.id)
+        const name = prompt('Input name of subcategory', '')
+        console.log(this.state.selectedCategory.id)
+        await this.webStorageService.postSubcategory(name, this.state.selectedCategory.id)
         await this.updateSubcategories(this.state.selectedCategory)
+    }
+
+    addVideoset = async () => {
+        const name = prompt('Input name of videoset', '')
+        await this.webStorageService.postVideoset(name, this.state.selectedSubcategory.id)
+        await this.updateVideosets(this.state.selectedSubcategory)
     }
 
     
 
     deleteCategory = async () => {
+        await this.webStorageService.deleteCategory(this.state.selectedCategory.id)
         this.setState({selectedCategory:null,selectedSubcategory:null})
-        //TODO
         await this.updateCategories()
+    }
+    deleteSubcategory = async () => {
+        await this.webStorageService.deleteSubcategory(this.state.selectedSubcategory.id)
+        await this.updateSubcategories(this.state.selectedCategory)
     }
 
 
@@ -87,11 +99,18 @@ export default class CategoryPage extends Component {
             return
 
         const videosets = await this.webStorageService.getVideosetsOfSubcategory(selectedSubcategory.id)
-        this.setState({selectedSubcategory,videosets})
+        this.setState({selectedSubcategory,videosets, numberOfVideosets:5})
+    }
+
+    showMoreVideosets = () => {
+        const {numberOfVideosets} = this.state
+        console.log(numberOfVideosets)
+        this.setState({numberOfVideosets:numberOfVideosets+5})
+        console.log(this.state.numberOfVideosets)
     }
 
     render () {
-        const {categories, subcategories, videosets, selectedCategory, selectedSubcategory} = this.state
+        const {categories, subcategories, videosets, selectedCategory, selectedSubcategory, numberOfVideosets} = this.state
         
         // const onNullText = <h4 className='select-message'>Select the category</h4>
 
@@ -115,8 +134,10 @@ export default class CategoryPage extends Component {
             ?<ColorButton className="danger" onClick={() => this.deleteCategory()}>Delete this category</ColorButton>:null
 
         const addVideosetButton = (user && user.status.endsWith('admin'))
-            ?<ColorButton className="success" onClick={() => this.addSubcategory()}>Add subcategory</ColorButton>:null
+            ?<ColorButton className="success" onClick={() => this.addVideoset()}>Add videoset</ColorButton>:null
 
+        const deleteSubcategoryButton = (user && user.status.endsWith('admin'))
+            ?<ColorButton className="danger" onClick={() => this.deleteSubcategory()}>Delete this subcategory</ColorButton>:null
 
         // console.log(subcategories)
         const categoriesList = (
@@ -140,7 +161,7 @@ export default class CategoryPage extends Component {
                     {renderCategoryTitle(selectedCategory.name)}
                     <ItemList onItemSelected={this.onSubcategorySelected} itemList={subcategories} />
                     {(!subcategories || subcategories.length === 0)?<h3 className='no-content-message'>Oops, there's no content</h3>:null}
-                    <div className="btn-group">
+                    <div className="category-details-buttons btn-group">
                     {addSubcategoryButton}
                     {deleteCategoryButton}
                     </div>
@@ -149,11 +170,19 @@ export default class CategoryPage extends Component {
             )
 
         const renderSubcategoryTitle = (name) => <h3 className="subcategory-title">Videosets of subcategory "{name}"</h3>
+        
         const videosetViews = (this.state.selectedSubcategory) ? (
             <div className="card">
-                <div className="card-body">
+                <div className="videoset-views card-body">
                     {renderSubcategoryTitle(selectedSubcategory.name)}
-                    <ItemList itemList={videosets} renderItems={this.renderVideosets}/>
+                    <div style={{display:'flex'}}>
+                        <div className="btn-group add-videoset-button">
+                            {addVideosetButton}
+                            {deleteSubcategoryButton}
+                        </div>
+                    </div>
+                    <ItemList showMore={()=>this.showMoreVideosets()} maxNumber={numberOfVideosets} itemList={videosets} renderItems={this.renderVideosets}/>
+                    
                 </div>
             </div>) : null
         return (
@@ -202,7 +231,7 @@ const VideosetCard = ({ id, name, order }) => {
             </div>
             <div className="card-body">
                 <h4 className="card-title">Description:</h4>
-                <p className="card-text">{description}</p>
+                <p className="card-text">{description?description:'No description'}</p>
 
             </div>
         </div>)

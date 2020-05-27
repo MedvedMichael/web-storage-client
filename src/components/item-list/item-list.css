@@ -10,3 +10,8 @@
 .item-list .list-group-item:hover {
   background-color: #444;
 }
+
+.show-more-button {
+  margin-left: auto;
+  margin-right: auto;
+}

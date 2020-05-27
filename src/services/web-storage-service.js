@@ -30,7 +30,7 @@ export default class WebStorageService {
         return await res.json()
     }
 
-    postSubcategory = async (name, type, categoryId) => {
+    postSubcategory = async (name, categoryId, type = "text") => {
         const data = {name, type}
         const token = localStorage.getItem('token')
         const res = await fetch(`${this._apiBase}/subcategories?categoryId=${categoryId}`, {
@@ -49,6 +49,25 @@ export default class WebStorageService {
         }
 
         return await res.json()
+    }
+
+    postVideoset = async (name,subcategoryId) => {
+        const data = {name}
+        const token = localStorage.getItem('token')
+        const res = await fetch(`${this._apiBase}/videoset?subcategoryId=${subcategoryId}`, {
+            method: 'POST', // *GET, POST, PUT, DELETE, etc.
+            mode: 'cors', // no-cors, *cors, same-origin
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization':`Bearer ${token}`
+                // 'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: JSON.stringify(data) // body data type must match "Content-Type" header
+        })
+        if (!res.ok){
+            console.log(res)
+            return { error: true }
+        }
     }
 
 
@@ -232,7 +251,14 @@ export default class WebStorageService {
 
     deleteVideoset = async (id) => {
         return await this.deleteItem('/videoset',id)
+    }
 
+    deleteCategory = async (id) => {
+        return await this.deleteItem('/categories', id)
+    }
+
+    deleteSubcategory = async (id) => {
+        return await this.deleteItem('/subcategories', id)
     }
 
     patchVideoset = async (id, props) => {
