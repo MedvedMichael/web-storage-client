@@ -14,7 +14,8 @@ export default class CategoryPage extends Component {
         categories:null,
         subcategories:null,
         videosets:null,
-        numberOfVideosets:5
+        numberOfVideosets:5,
+        last10Videosets:null
     }
 
     componentDidMount = async () => {
@@ -23,6 +24,10 @@ export default class CategoryPage extends Component {
 
     onCategorySelected = async (selectedCategory) => {
         await this.updateSubcategories(selectedCategory)
+        this.webStorageService.getLast10Videosets(selectedCategory.id).then((last10Videosets)=>{
+            this.setState({last10Videosets})
+        })
+        
     }
 
     onSubcategorySelected = async (selectedSubcategory) => {
@@ -106,7 +111,7 @@ export default class CategoryPage extends Component {
     }
 
     render () {
-        const {categories, subcategories, videosets, selectedCategory, selectedSubcategory, numberOfVideosets} = this.state
+        const { categories, subcategories, videosets, last10Videosets, selectedCategory, selectedSubcategory, numberOfVideosets } = this.state
         
         // const onNullText = <h4 className='select-message'>Select the category</h4>
 
@@ -166,18 +171,19 @@ export default class CategoryPage extends Component {
             )
 
         const renderSubcategoryTitle = (name) => <h3 className="subcategory-title">Videosets of subcategory "{name}"</h3>
-        
-        const videosetViews = (this.state.selectedSubcategory) ? (
+        const renderLast10VideosetsTitle = (name) => <h3 className="subcategory-title">Last 10 videosets of category "{name}"</h3>
+        const videosetViews = (selectedSubcategory || selectedCategory) ? (
             <div className="card">
                 <div className="videoset-views card-body">
-                    {renderSubcategoryTitle(selectedSubcategory.name)}
+                    {(selectedSubcategory)?renderSubcategoryTitle(selectedSubcategory.name):renderLast10VideosetsTitle(selectedCategory.name)}
                     <div style={{display:'flex'}}>
                         <div className="btn-group add-videoset-button">
                             {addVideosetButton}
                             {deleteSubcategoryButton}
                         </div>
                     </div>
-                    <ItemList showMore={()=>this.showMoreVideosets()} maxNumber={numberOfVideosets} itemList={videosets} renderItems={this.renderVideosets}/>
+                    {(selectedSubcategory)?<ItemList showMore={()=>this.showMoreVideosets()} maxNumber={numberOfVideosets} itemList={videosets} renderItems={this.renderVideosets}/>
+                    :<ItemList itemList={last10Videosets} renderItems={this.renderVideosets}/>}
                     
                 </div>
             </div>) : null
@@ -210,8 +216,8 @@ const Row = ({ left, right }) => {
     )
 }
 
-const VideosetCard = ({ id, name, order, logoURL }) => {
-    const descriptionItem = order.find((item) => item.type === 'VideosetDescription')
+const VideosetCard = ({ id, name, order, logoURL, subcategoryName }) => {
+    const descriptionItem = (order)?order.find((item) => item.type === 'VideosetDescription'):null
     const description = descriptionItem ? descriptionItem.value.split('\n')[0] : null
     const pathToVideoset = `/videosets/${id}`
     const logo = (logoURL)?<img className='logo' src={logoURL} alt=""/>:null
@@ -222,9 +228,12 @@ const VideosetCard = ({ id, name, order, logoURL }) => {
                 history.push(pathToVideoset)
             }} >
             <div className="card-header">
-                <h4 className="videoset-preview-title">
-                    <Link to={pathToVideoset}>{name}</Link>
-                </h4>
+                <div style={{display:'flex'}} className="row">
+                    <h4 className="videoset-preview-title">
+                        <Link to={pathToVideoset}>{name}</Link>
+                    </h4>
+                    {(subcategoryName)?<h4 className="videoset-preview-subcategory-title">Subcategory: {subcategoryName}</h4>:null}
+                </div>
             </div>
             <div className="card-body">
                 <div className="row">

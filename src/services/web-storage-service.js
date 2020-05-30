@@ -10,6 +10,9 @@ export default class WebStorageService {
         return await res.json()
     }
 
+    getLast10Videosets = async (id) => {
+        return this.getResourse(`/videosets-last-10?categoryId=${id}`).then((videosets)=>videosets.map(this._transformItem))
+    }
     getAllSubcategories = async () => {
         const subcategories = await this.getResourse('/subcategoriesall')
         return subcategories.map(this._transformItem)
