@@ -57,6 +57,10 @@ export default class VideosContainer extends Component {
             await this.props.uploadingURLVideo(this.props.id,name, newURL)
             
         }
+        else {
+            const name = prompt('Input video name: ', 'Video')
+            await this.props.uploadingURLVideo(this.props.id,name, inputFormURL)
+        }
         this.setState({showModal:false})
 
 

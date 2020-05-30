@@ -32,8 +32,9 @@ export default class CategoryPage extends Component {
     renderVideosets = (videosets) => {
         const videosetsCards = videosets.map((props,index) => {
             const key = `VideosetCard-${index}`
+            const logoURL = (props.hasLogo) ? `${this.webStorageService._apiBase}/logo?videosetId=${props.id}` : null
             return (
-                <VideosetCard key={key} {...props}/>
+                <VideosetCard key={key} {...props} logoURL={logoURL}/>
             )
         })
         return (
@@ -209,10 +210,11 @@ const Row = ({ left, right }) => {
     )
 }
 
-const VideosetCard = ({ id, name, order }) => {
+const VideosetCard = ({ id, name, order, logoURL }) => {
     const descriptionItem = order.find((item) => item.type === 'VideosetDescription')
     const description = descriptionItem ? descriptionItem.value.split('\n')[0] : null
     const pathToVideoset = `/videosets/${id}`
+    const logo = (logoURL)?<img className='logo' src={logoURL} alt=""/>:null
     const history = useHistory()
     return (
         <div key={id} className="videoset-card card border-success"
@@ -225,9 +227,13 @@ const VideosetCard = ({ id, name, order }) => {
                 </h4>
             </div>
             <div className="card-body">
-                <h4 className="card-title">Description:</h4>
-                <p className="card-text">{description?description:'No description'}</p>
-
+                <div className="row">
+                    {logo}
+                    <div className="videoset-card-description">
+                        <h4 className="card-title">Description:</h4>
+                        <p className="card-text">{description ? description : 'No description'}</p>
+                    </div>
+                </div>
             </div>
         </div>)
 }

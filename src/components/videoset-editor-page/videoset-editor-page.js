@@ -9,6 +9,7 @@ import VideosContainer from '../videos-container/videos-container';
 import VideoPlayer from '../video-player/video-player'
 import './videoset-editor-page.css'
 import Modal from '../modal/modal'
+import Url from 'url-parse'
 
 export default class VideosetEditorPage extends Component {
 
@@ -64,7 +65,7 @@ export default class VideosetEditorPage extends Component {
             const element = order[i]
             
             if (element.type === 'VideosetDescription' && element.value !== null) {
-                this.addItemToColumn(VideosetDescription, { text: element.value, editable: true })
+                this.addItemToColumn(VideosetDescription, { text: element.value, saveDescription:this.saveDescription, editable: true })
             }
             else if (element.type === 'PictureSlider' && element.value) {
                 const dataURLs = await this.webStorageService.getPicturesOfSlider(element.value)
@@ -212,17 +213,26 @@ export default class VideosetEditorPage extends Component {
     }
 
     onVideoClick = async (video) => {
-        let videoPlayer
+        let {videoPlayer, showModal} = video
         const { source, id } = video
 
         if (source === 'local') {
             videoPlayer = <VideoPlayer video={video} url={`${this.webStorageService._apiBase}/video/${id}`} />
+            showModal=true
         }
         else {
-            const videoSchema = await this.webStorageService.getResourse(`/video/${id}`)
-            videoPlayer = <VideoPlayer video={video} url={videoSchema.file} />
+            const videoURL = new Url(video.file)
+            if(videoURL.hostname === 'www.youtube.com'){
+                console.log(videoURL.hostname)
+                videoPlayer = <VideoPlayer video={video} url={video.file} />
+                showModal=true
+            }
+            else {
+                window.open(video.file);
+                showModal=false
+            }
         }
-        this.setState({ videoPlayer, showModal: true })
+        this.setState({ videoPlayer, showModal })
         
     }
 
@@ -301,6 +311,10 @@ export default class VideosetEditorPage extends Component {
         this.setState(data)
     }
 
+    changeLogo = async (logo) => {
+        await this.webStorageService.postLogo(this.state.data.id, logo)
+    }
+
     changeSubcategory = (id) => {
         const {data} = this.state
         data.owner = id
@@ -333,7 +347,7 @@ export default class VideosetEditorPage extends Component {
                     {name}
                 </h1>
 
-                <EditorBar id={data.id} videoset={data} changeSubcategory={this.changeSubcategory} deleteVideoset={this.deleteVideoset} changeTitle={this.changeTitle} onVideosetElementAdded={this.onVideosetElementAdded} saveChanges={this.saveChanges} cancelAction={this.cancelAction} />
+                <EditorBar changeLogo={this.changeLogo} id={data.id} videoset={data} changeSubcategory={this.changeSubcategory} deleteVideoset={this.deleteVideoset} changeTitle={this.changeTitle} onVideosetElementAdded={this.onVideosetElementAdded} saveChanges={this.saveChanges} cancelAction={this.cancelAction} />
                 <EditorContext onDragEnd={this.onDragEnd}>
                     <VerticalColumn id={columnId} items={itemList} onItemDeleted={this.onVideosetItemDeleted} />
                 </EditorContext>

@@ -6,7 +6,7 @@ import PictureSlider from '../picture-slider/picture-slider';
 import WrapperCard from '../wrapper-card/wrapper-card'
 import VideoPlayer from '../video-player/video-player';
 import Modal from '../modal/modal';
-
+import Url from 'url-parse'
 import './videoset-page.css'
 import { useHistory } from 'react-router-dom';
 
@@ -77,19 +77,29 @@ export default class VideosetPage extends Component {
     }
 
     onVideoClick = async (video) => {
-        let videoPlayer
+        let {videoPlayer, showModal} = video
         const { source, id } = video
 
         if (source === 'local') {
             videoPlayer = <VideoPlayer video={video} url={`${this.webStorageService._apiBase}/video/${id}`} />
+            showModal=true
         }
         else {
-            const videoSchema = await this.webStorageService.getResourse(`/video/${id}`)
-            videoPlayer = <VideoPlayer video={video} url={videoSchema.file} />
+            const videoURL = new Url(video.file)
+            if(videoURL.hostname === 'www.youtube.com'){
+                console.log(videoURL.hostname)
+                videoPlayer = <VideoPlayer video={video} url={video.file} />
+                showModal=true
+            }
+            else {
+                window.open(video.file);
+                showModal=false
+            }
         }
-        this.setState({ videoPlayer, showModal: true })
-       
+        this.setState({ videoPlayer, showModal })
+        
     }
+
 
 
 

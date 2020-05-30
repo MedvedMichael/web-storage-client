@@ -62,6 +62,10 @@ class EditorBar extends Component {
         await this.props.deleteVideoset()
     }
 
+    onChangeLogoButtonClick = async ({files}) => {
+        await this.props.changeLogo(files[0])
+    }
+
     render() {
 
         const { isDropdownMenuOpened, isDropdownSubcategoryMenuOpened, videosetItems, subcategories } = this.state
@@ -97,7 +101,13 @@ class EditorBar extends Component {
             </div>
         )):null
         const changeTitle = <button type="button" className="change-title btn btn-primary" onClick={this.onChangeTitleButtonClick}>Change title</button>
-        
+
+        const changeLogo = (
+            <div className="change-title">
+                <label htmlFor="file-upload" className="btn btn-warning custom-file">Upload logo</label>
+                <input onChange={({ target }) => this.onChangeLogoButtonClick(target)} id="file-upload" type="file" className="custom-file-input" />
+            </div>)
+
         const deleteVideosetButton = <DeleteVideosetButton id={this.props.id} onClick={async()=>await this.onDeleteVideosetClickButton()}/>
         return (
             <div className="editor-bar-container">
@@ -113,6 +123,7 @@ class EditorBar extends Component {
                         <li>
                             <div className="btn-group">
                                 {changeTitle}
+                                {changeLogo}
                                 {deleteVideosetButton}
                             </div>
                         </li>

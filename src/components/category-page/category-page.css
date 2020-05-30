@@ -69,7 +69,18 @@
     display: flex;
 }
 
+.logo {
+    width: 75px;
+    height: 75px;
+    margin-left: 1rem;
+    margin-right: 2rem;
+}
 
+.videoset-card-description {
+    margin-top: .5rem;
+    margin-left: 1rem;
+    padding-bottom: .5rem;
+}
 
 .add-videoset-button{
     margin-left: auto;

@@ -117,13 +117,10 @@ export default class WebStorageService {
         }
     }
 
-
-
-    postPicture = async (id, file) => {
-        
+    postFormData = async(url,id,file,type,data) => {
         const token = localStorage.getItem('token')
-        const data = { source: 'local' }
-        const res = await fetch(`${this._apiBase}/picture?pictureSliderId=${id}`, {
+        
+        const res = await fetch(`${this._apiBase}${url}${id}`, {
             method: 'POST', // *GET, POST, PUT, DELETE, etc.
             mode: 'cors', // no-cors, *cors, same-origin
             headers: {
@@ -135,17 +132,15 @@ export default class WebStorageService {
         })
         
         if (!res.ok){
-            
             return { error: true }
         }
         const temp = await res.json();
-        
-        const pictureId = temp._id;
-
+        const itemId = temp._id;
         const formData = new FormData()
-        formData.append('image', file)
-        
-        const uploadingPhoto = await fetch(`${this._apiBase}/picture/upload/${pictureId}`, {
+        formData.append(type, file)
+
+        const newUrl = url.slice(0,url.indexOf('?'))
+        const uploading = await fetch(`${this._apiBase}${newUrl}/upload/${itemId}`, {
             method: 'POST', // *GET, POST, PUT, DELETE, etc.
             mode: 'cors', // no-cors, *cors, same-origin
             headers: {
@@ -154,61 +149,23 @@ export default class WebStorageService {
             },
             body: formData // body data type must match "Content-Type" header,
         })
-
-
-        
-        if (!uploadingPhoto.ok)
+      
+        if (!uploading.ok)
             return { error: true }
 
-        
         return { ok: true }
+    }
 
+    postPicture = async (id, file) => {
+        return await this.postFormData('/picture?pictureSliderId=', id, file, 'image', { source: 'local' })
+    }
+
+    postLogo = async (id, file) => {
+        return await this.postFormData('/logo?videosetId=', id, file, 'image', { source: 'local' })
     }
 
     postVideo = async (id, name, file) => {
-        
-        const token = localStorage.getItem('token')
-        const data = { source: 'local', name }
-        const res = await fetch(`${this._apiBase}/video?videosContainerId=${id}`, {
-            method: 'POST', // *GET, POST, PUT, DELETE, etc.
-            mode: 'cors', // no-cors, *cors, same-origin
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization':`Bearer ${token}`
-                // 'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: JSON.stringify(data) // body data type must match "Content-Type" header
-        })
-        
-        if (!res.ok){
-            
-            return { error: true }
-        }
-        const temp = await res.json();
-        
-        const videoId = temp._id;
-
-        const formData = new FormData()
-        formData.append('image', file)
-        
-        const uploadingVideo = await fetch(`${this._apiBase}/video/upload/${videoId}`, {
-            method: 'POST', // *GET, POST, PUT, DELETE, etc.
-            mode: 'cors', // no-cors, *cors, same-origin
-            headers: {
-                'Authorization':`Bearer ${token}`
-                // 'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: formData
-        })
-
-
-        
-        if (!uploadingVideo.ok)
-            return { error: true }
-
-        
-        return { ok: true }
-
+        return await this.postFormData('/video?videosContainerId=',id,file,'video',{source:'local', name})
     }
 
     postURLVideo = async (id, name, url) => {
