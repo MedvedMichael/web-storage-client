@@ -96,7 +96,7 @@ export default class VideosContainer extends Component {
             <Modal show={showModal} onClose={() => this.setState({ showModal: false })} title="Uploading video">
                 <div className="d-flex list-group nav-pills">
                     <div className="video-modal-line">
-                        <h2>Upload video from YouTube</h2>
+                        <h2>Upload video from compatible services</h2>
                     </div>
                     
                     <div className="video-modal-line input-group">
