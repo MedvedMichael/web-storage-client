@@ -135,7 +135,7 @@ export default class VideosetPage extends Component {
         
 
         const userString = localStorage.getItem('user')
-        const user = (userString!=='')?JSON.parse(userString):null;
+        const user = (userString!=='undefined')?JSON.parse(userString):null;
         return (
             <div className="videoset">
                 {videoPlayerModal}
