@@ -77,19 +77,26 @@
 }
 
 .logo {
-    width: 75px;
-    height: 75px;
+    width: 100px;
+    height: 100px;
     margin-left: 1rem;
     margin-right: 2rem;
+    margin-top: auto;
+    margin-bottom: auto;
 }
 
 .videoset-card-description {
     margin-top: .5rem;
-    margin-left: 1rem;
+    margin-left: .5rem;
     padding-bottom: .5rem;
 }
 
 .add-videoset-button{
     margin-left: auto;
     margin-right: 1.5rem;
+}
+
+.subcategory-title {
+    padding-bottom: .5rem;
+    margin-left: .5rem;
 }

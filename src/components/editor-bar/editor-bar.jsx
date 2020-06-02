@@ -64,11 +64,21 @@ class EditorBar extends Component {
 
     onChangeLogoButtonClick = async ({files}) => {
         await this.props.changeLogo(files[0])
+        const { videoset } = this.state
+        videoset.hasLogo = true
+        this.setState({videoset})
+    }
+
+    onDeleteLogoButtonClick = async () => {
+        await this.webStorageService.deleteLogo(this.state.videoset.id)
+        const { videoset } = this.state
+        videoset.hasLogo = false
+        this.setState({videoset})
     }
 
     render() {
 
-        const { isDropdownMenuOpened, isDropdownSubcategoryMenuOpened, videosetItems, subcategories } = this.state
+        const { isDropdownMenuOpened, isDropdownSubcategoryMenuOpened, videosetItems, subcategories, videoset } = this.state
         const dropdownMenuStyle = `dropdown-menu ${isDropdownMenuOpened ? 'show' : ''}`
         const dropdownSubcategoryMenuStyle = `dropdown-menu ${isDropdownSubcategoryMenuOpened ? 'show' : ''}`
         const SaveChangesButton = ({ id,onClick }) => {
@@ -108,6 +118,7 @@ class EditorBar extends Component {
                 <input onChange={({ target }) => this.onChangeLogoButtonClick(target)} id="file-upload" type="file" className="custom-file-input" />
             </div>)
 
+        const deleteLogo = (<button type="button" className="change-title btn btn-danger" onClick={this.onDeleteLogoButtonClick}>Delete logo</button>)
         const deleteVideosetButton = <DeleteVideosetButton id={this.props.id} onClick={async()=>await this.onDeleteVideosetClickButton()}/>
         return (
             <div className="editor-bar-container">
@@ -122,8 +133,9 @@ class EditorBar extends Component {
                         </li>
                         <li>
                             <div className="btn-group">
-                                {changeTitle}
                                 {changeLogo}
+                                {(videoset && videoset.hasLogo)?deleteLogo:null}
+                                {changeTitle}
                                 {deleteVideosetButton}
                             </div>
                         </li>

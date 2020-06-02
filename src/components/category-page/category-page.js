@@ -176,12 +176,14 @@ export default class CategoryPage extends Component {
             <div className="card">
                 <div className="videoset-views card-body">
                     {(selectedSubcategory)?renderSubcategoryTitle(selectedSubcategory.name):renderLast10VideosetsTitle(selectedCategory.name)}
+                    { (selectedSubcategory)?(
                     <div style={{display:'flex'}}>
                         <div className="btn-group add-videoset-button">
                             {addVideosetButton}
                             {deleteSubcategoryButton}
                         </div>
                     </div>
+                    ):null}
                     {(selectedSubcategory)?<ItemList showMore={()=>this.showMoreVideosets()} maxNumber={numberOfVideosets} itemList={videosets} renderItems={this.renderVideosets}/>
                     :<ItemList itemList={last10Videosets} renderItems={this.renderVideosets}/>}
                     
@@ -238,7 +240,8 @@ const VideosetCard = ({ id, name, order, logoURL, subcategoryName }) => {
             <div className="card-body">
                 <div className="row">
                     {logo}
-                    <div className="videoset-card-description">
+                    
+                    <div className="videoset-card-description col-9">
                         <h4 className="card-title">Description:</h4>
                         <p className="card-text">{description ? description : 'No description'}</p>
                     </div>

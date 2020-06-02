@@ -307,8 +307,10 @@ export default class VideosetEditorPage extends Component {
     changeTitle = () => {
         const {data} = this.state
         const newTitle = prompt("Input new title", data.name)
-        data.name = newTitle
-        this.setState(data)
+        if (newTitle && newTitle !== '') {
+            data.name = newTitle
+            this.setState(data)
+        }
     }
 
     changeLogo = async (logo) => {

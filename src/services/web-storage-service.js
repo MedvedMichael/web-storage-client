@@ -281,6 +281,25 @@ export default class WebStorageService {
         return await this.deleteItem('/subcategories', id)
     }
 
+    deleteLogo = async (id) => {
+        const token = localStorage.getItem('token')
+        const res = await fetch(`${this._apiBase}/logo?videosetId=${id}`, {
+            method: 'DELETE', // *GET, POST, PUT, DELETE, etc.
+            mode: 'cors', // no-cors, *cors, same-origin
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization':`Bearer ${token}`
+                // 'Content-Type': 'application/x-www-form-urlencoded',
+            }
+            // body: JSON.stringify(data) // body data type must match "Content-Type" header
+        })
+        
+        if(!res.ok)
+        return {error:true}
+
+        return await res.json()
+    }
+
     patchVideoset = async (id, props) => {
         const token = localStorage.getItem('token')
         const res = await fetch(`${this._apiBase}/videosets?videosetId=${id}`, {
