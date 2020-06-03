@@ -257,6 +257,7 @@ export default class VideosetEditorPage extends Component {
         const { data, itemList, deleted } = this.state
        
         const order = []
+        console.log(itemList)
         for(let i=0;i<itemList.length;i++){
             const item = itemList[i]
             const newItem = { type: item.type.name }
@@ -275,6 +276,7 @@ export default class VideosetEditorPage extends Component {
             order.push(newItem)
         }
         data.order = order
+        console.log(order)
         await this.webStorageService.patchVideoset(this.props.id, { order, name:data.name, owner:data.owner })
 
         
