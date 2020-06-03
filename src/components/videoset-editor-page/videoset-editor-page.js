@@ -281,10 +281,10 @@ export default class VideosetEditorPage extends Component {
         if (deleted.length !== 0) {
             
             for (let i = 0; i < deleted.length; i++) {
-                if (deleted[i].type.name === 'PictureSlider') {
+                if (deleted[i].props.uploadingPicture) {
                     await this.webStorageService.deleteSlider(deleted[i].props.id)
                 }
-                else if (deleted[i].type.name === 'VideosContainer') {
+                else if (deleted[i].props.onVideoClick) {
                     await this.webStorageService.deleteVideosContainer(deleted[i].props.id)
                 }
             }
