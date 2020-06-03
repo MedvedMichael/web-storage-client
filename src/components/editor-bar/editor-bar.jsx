@@ -63,6 +63,7 @@ class EditorBar extends Component {
     }
 
     onChangeLogoButtonClick = async ({files}) => {
+        console.log('KU')
         await this.props.changeLogo(files[0])
         const { videoset } = this.state
         videoset.hasLogo = true
@@ -114,8 +115,8 @@ class EditorBar extends Component {
 
         const changeLogo = (
             <div className="change-title">
-                <label htmlFor="file-upload" className="btn btn-warning custom-file">Upload logo</label>
-                <input onChange={({ target }) => this.onChangeLogoButtonClick(target)} id="file-upload" type="file" className="custom-file-input" />
+                <label htmlFor="logo-upload" className="btn btn-warning custom-file">Upload logo</label>
+                <input onChange={({ target }) => this.onChangeLogoButtonClick(target)} id="logo-upload" type="file" className="custom-file-input" />
             </div>)
 
         const deleteLogo = (<button type="button" className="change-title btn btn-danger" onClick={this.onDeleteLogoButtonClick}>Delete logo</button>)
