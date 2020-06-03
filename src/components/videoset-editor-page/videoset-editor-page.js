@@ -257,7 +257,8 @@ export default class VideosetEditorPage extends Component {
         const { data, itemList, deleted } = this.state
        
         const order = []
-        itemList.forEach(item => {
+        for(let i=0;i<itemList.length;i++){
+            const item = itemList[i]
             const newItem = { type: item.type.name }
             switch (item.type.name) {
                 case 'PictureSlider':
@@ -272,7 +273,7 @@ export default class VideosetEditorPage extends Component {
                 default: return
             }
             order.push(newItem)
-        })
+        }
         data.order = order
         await this.webStorageService.patchVideoset(this.props.id, { order, name:data.name, owner:data.owner })
 
