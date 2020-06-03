@@ -257,27 +257,24 @@ export default class VideosetEditorPage extends Component {
         const { data, itemList, deleted } = this.state
        
         const order = []
-        order.push({type:'VideosetDescription', value:'Test'})
-        console.log(itemList)
         for(let i=0;i<itemList.length;i++){
             const item = itemList[i]
-            const newItem = { type: item.type.name }
-            switch (item.type.name) {
-                case 'PictureSlider':
-                case 'VideosContainer':
-                    newItem.value = item.props.id
-                    break
-
-                case 'VideosetDescription':
-                    newItem.value = item.props.text
-                    break
-
-                default: return
+            const newItem = {}
+            if (item.props.text) {
+                newItem.type = 'VideosetDescription'
+                newItem.value = item.props.text
+            }
+            else if (item.props.uploadingPicture) {
+                newItem.type = 'PictureSlider'
+                newItem.value = item.props.id
+            }
+            else if (item.props.onVideoClick) {
+                newItem.type = 'VideosContainer'
+                newItem.value = item.props.id
             }
             order.push(newItem)
         }
         data.order = order
-        console.log(order)
         await this.webStorageService.patchVideoset(this.props.id, { order, name:data.name, owner:data.owner })
 
         
