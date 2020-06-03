@@ -257,6 +257,7 @@ export default class VideosetEditorPage extends Component {
         const { data, itemList, deleted } = this.state
        
         const order = []
+        order.push({type:'VideosetDescription', value:'Test'})
         console.log(itemList)
         for(let i=0;i<itemList.length;i++){
             const item = itemList[i]
