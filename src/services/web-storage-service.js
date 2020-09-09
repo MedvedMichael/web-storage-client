@@ -1,6 +1,5 @@
 
 export default class WebStorageService {
-    // _apiBase = 'http://localhost:3001/api'
        _apiBase = 'https://mike-test-heroku-node.herokuapp.com/api'
     getResourse = async (url) => {
         const res = await fetch(`${this._apiBase}${url}`)
