@@ -8,7 +8,8 @@ export default class ItemList extends Component {
   // swapiService = new SwapiService()
 
   state = {
-    itemList: null
+    itemList: null,
+    selected: null
   }
 
   componentDidMount() {
@@ -22,32 +23,35 @@ export default class ItemList extends Component {
 
   updateList = () => {
     const { itemList, maxNumber } = this.props
-    this.setState({ itemList, maxNumber })
+    this.setState({ itemList, maxNumber, selected:null })
   }
 
-  onItemSelected = (item) => this.props.onItemSelected(item)
+  onItemSelected = (item, index) => { 
+    this.setState({ selected: index })
+    this.props.onItemSelected(item) 
+  }
 
 
   render() {
 
-    const { itemList, maxNumber } = this.state
-    const { renderItems, onItemSelected = () => { } } = this.props
+    const { itemList, maxNumber, selected } = this.state
+    const { renderItems } = this.props
     if (!itemList)
       return <Spinner />
 
     const numberOfElements = maxNumber ? maxNumber : itemList.length
 
     const currentItemList = itemList.slice(0,numberOfElements)
-    const itemViews = (!renderItems)? currentItemList.map((item) => {
+    const itemViews = (!renderItems) ? currentItemList.map((item, index) => {
       const { name, id } = item
-      
       return (
-        <li className="list-group-item"
+        <li className={`list-group-item ${index === selected ? 'selected-list-group-item' : ''}`}
           key={id}
-          onClick={() => onItemSelected(item)}>{name}
+          onClick={() => this.onItemSelected(item, index)}>{name}
         </li>
       )
-    }):renderItems(currentItemList)
+    }):renderItems(currentItemList, selected, this.onItemSelected)
+  
     return (
       <div>
         <ul className="item-list list-group">

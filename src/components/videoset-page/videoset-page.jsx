@@ -24,11 +24,24 @@ export default class VideosetPage extends Component {
     }
 
     componentDidMount = async () => {
+        
+        await this.initPage()
+    }
+
+    initPage = async () => {
         const { id } = this.props
         const videoset = await this.webStorageService.getVideoset(id)
 
         this.setState({ data: videoset })
         this.initialAddingItems()
+    }
+
+    componentDidUpdate = async (prevProps) => {
+        if(prevProps.id !== this.props.id){
+            this.setState({data:null,itemList:[]})
+            await this.initPage()
+        }
+        
     }
 
     initialAddingItems = async () => {
@@ -51,7 +64,7 @@ export default class VideosetPage extends Component {
 
             else if (element.type === 'VideosContainer' && element.value) {
                 const videos = await this.webStorageService.getVideosOfVideosContainer(element.value)
-                await this.addItemToColumn(VideosContainer, { id: element.value, videos,onVideoClick: this.onVideoClick })
+                await this.addItemToColumn(VideosContainer, { id: element.value, name: element.name, videos, onVideoClick: this.onVideoClick })
             }
         }
 

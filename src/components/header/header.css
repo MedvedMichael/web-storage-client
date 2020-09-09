@@ -49,3 +49,20 @@
 .web-storage-title{
     font-size: 100px;
 }
+
+.search-input-form {
+    display: block;
+    margin-left: auto;
+    margin-top: .5rem;
+}
+
+.header-card-box {
+    margin-left: auto;
+}
+
+.found-videosets {
+    width: 221px;
+    position: absolute;
+    z-index: 999;
+    /* display: flex; */
+}

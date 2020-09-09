@@ -3,20 +3,17 @@ import './videoset-description.css'
 class VideosetDescription extends Component{
 
     state = {
-        text:"",
+        text:'',
         editable:false,
-        editableText:"",
+        editableText:'',
+        editableTitle:'',
         editStatus:false
-    }
-
-    getText = () => {
-        return this.state.text
     }
 
     componentDidMount = () => {
         const {text, editable} = this.props
 
-        this.setState({text:(text)?text:'',editable:(editable)?editable:false})
+        this.setState({ text: (text) ? text : '&&&', editable: (editable) ? editable : false })
     }
 
     componentDidUpdate = (prevProps) => {
@@ -26,34 +23,39 @@ class VideosetDescription extends Component{
     }
 
     onSaveClick = () => {
-        const {editableText} = this.state
-        this.setState({text:editableText,editStatus:false})
-        this.props.saveDescription(this.props.id, editableText)
+        const {editableText, editableTitle} = this.state
+        const newText = (editableTitle!=='' ? editableTitle : 'Description') + "&&&" + editableText
+        this.setState({ text: newText, editStatus: false })
+        this.props.saveDescription(this.props.id, newText)
     }
 
     onChangeClick = () => {
         const {editStatus,text} = this.state
         const newStatus = !editStatus
-        this.setState({editStatus:newStatus, editableText:text})
+        const [titleText, mainText] = text.split('&&&')
+        this.setState({ editStatus: newStatus, editableText: mainText, editableTitle: titleText })
     }
     render() {
-        const { editable, editableText, editStatus, text } = this.state
-        const title = <h3 className="text-success"> Description: </h3>
+        const { editable, editableText, editStatus, text, editableTitle } = this.state
+        const [titleText, mainText] = text.split('&&&')
+        const title = !editStatus ? <h3 className="text-success"> {titleText && titleText !== "" ? titleText : "Description"}: </h3>
+            : <textarea className="form-control edit-title-area" rows="1" onChange={({ target }) => { this.setState({ editableTitle: target.value }) }} value={editableTitle}></textarea>
+            
         const textField = (
-        <div className="form-group">
-                <textarea className="form-control edit-text-area" rows="3" onChange={({target})=>{this.setState({editableText:target.value})}} value={editableText}></textarea>
+            <div className="form-group text-field">
+                <textarea className="form-control edit-text-area" rows="3" onChange={({ target }) => { this.setState({ editableText: target.value }) }} value={editableText}></textarea>
                 <div className="btn-group">
-                    <button type="button" className="btn btn-success save-btn" onClick={()=>{this.onSaveClick()}}>Save changes</button>
-                    <button type="button" className="btn btn-secondary save-btn" data-dismiss="modal" onClick={()=>this.setState({editStatus:!this.state.editStatus})}>Close</button>
+                    <button type="button" className="btn btn-success save-btn" onClick={() => { this.onSaveClick() }}>Save changes</button>
+                    <button type="button" className="btn btn-secondary save-btn" data-dismiss="modal" onClick={() => this.setState({ editStatus: !this.state.editStatus })}>Close</button>
                 </div>
-        </div>)
+            </div>)
 
         const changeButton = (editable) ? (
             <div className="change-btn">
                 <button type="button" className="btn btn-outline-success btn-lg" onClick={() => { this.onChangeClick() }}>Change</button>
             </div>) : null
 
-        const linesOfDescription = text.split('\n').map((item,index)=><h4 key={`description-line${index}`} className="description">{item}</h4>);
+        const linesOfDescription = !mainText ? "" : mainText.split('\n').map((item, index) => <h4 key={`description-line${index}`} className="description">{item}</h4>);
         
         const description = (
             <div className="card-body">
@@ -65,7 +67,7 @@ class VideosetDescription extends Component{
             <div className="videoset-description">
                 <Row left={title} right={description} />
                 <div>
-                {(!editStatus)?changeButton:null}
+                    {(!editStatus) ? changeButton : null}
                 </div>
             </div>)
     }

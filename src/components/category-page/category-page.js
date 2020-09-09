@@ -1,6 +1,6 @@
 
 import React, { Component } from 'react';
-import { Link, useHistory } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 import WebStorageService from '../../services/web-storage-service'
 import ItemList from '../item-list/item-list'
 import './category-page.css'
@@ -15,10 +15,12 @@ export default class CategoryPage extends Component {
         subcategories:null,
         videosets:null,
         numberOfVideosets:5,
-        last10Videosets:null
+        last10Videosets:null,
+        user:null
     }
 
     componentDidMount = async () => {
+        
         await this.updateCategories()
     }
 
@@ -49,6 +51,32 @@ export default class CategoryPage extends Component {
         )
     }
 
+    renderList = (onDeleteButtonClick) => (list, selected,onItemSelected) => {
+        const {user} = this.state
+        const itemViews = list.map((item, index) => {
+            const { name, id } = item
+            return (
+                <li className={`list-group-item d-flex ${index === selected ? 'selected-list-group-item' : ''}`}
+                    key={id}
+                    onClick={({ target }) => !target.className.includes('btn') ? onItemSelected(item, index) : null}>
+                    <div className="flex">
+                        <h5 className="list-item-title">{name}</h5>
+                    </div>
+                    {user && user.status === 'main-admin' ? <button className="btn btn-outline-danger list-delete-button"
+                        onClick={() => onDeleteButtonClick(item)}>Delete</button> : null}
+                </li> 
+            )
+          })
+          return (
+            <div>
+              <ul className="item-list list-group">
+                {itemViews}
+              </ul>
+            </div>
+      
+          );
+    }
+
     addCategory = async () => {
         const name = prompt('Input name of category', '')
         await this.webStorageService.postCategory(name)
@@ -70,20 +98,23 @@ export default class CategoryPage extends Component {
 
     
 
-    deleteCategory = async () => {
-        await this.webStorageService.deleteCategory(this.state.selectedCategory.id)
+    deleteCategory = async (category) => {
         this.setState({selectedCategory:null,selectedSubcategory:null})
+        await this.webStorageService.deleteCategory(category.id)
         await this.updateCategories()
     }
-    deleteSubcategory = async () => {
-        await this.webStorageService.deleteSubcategory(this.state.selectedSubcategory.id)
+    deleteSubcategory = async (subcategory) => {
+        await this.webStorageService.deleteSubcategory(subcategory.id)
+        this.setState({selectedSubcategory:null})
         await this.updateSubcategories(this.state.selectedCategory)
     }
 
 
     updateCategories = async () => {
+        const userString = localStorage.getItem('user')
+        const user = (userString && userString!=='undefined') ? JSON.parse(userString) : null
         const categories = await this.webStorageService.getAllCategories()
-        this.setState({categories})
+        this.setState({user, categories})
     }
 
     updateSubcategories = async (selectedCategory) => {
@@ -111,15 +142,11 @@ export default class CategoryPage extends Component {
     }
 
     render () {
-        const { categories, subcategories, videosets, last10Videosets, selectedCategory, selectedSubcategory, numberOfVideosets } = this.state
+        const { user, categories, subcategories, videosets, last10Videosets, selectedCategory, selectedSubcategory, numberOfVideosets } = this.state
         
         // const onNullText = <h4 className='select-message'>Select the category</h4>
 
-        const userString = localStorage.getItem('user')
-        
-
-        
-        const user = (userString && userString!=='undefined') ? JSON.parse(userString) : null
+       
         const ColorButton = ({className,children, onClick}) => (
             // <div className="add-delete-btn-group btn-group">
                 <button type="button" className={`btn btn-outline-${className}`} onClick={onClick}>{children}</button>
@@ -131,22 +158,22 @@ export default class CategoryPage extends Component {
         const addSubcategoryButton = (user && user.status === 'main-admin')
             ?<ColorButton className="success" onClick={() => this.addSubcategory()}>Add subcategory</ColorButton>:null
 
-        const deleteCategoryButton = (user && user.status === 'main-admin')
-            ?<ColorButton className="danger" onClick={() => this.deleteCategory()}>Delete this category</ColorButton>:null
+        // const deleteCategoryButton = (user && user.status === 'main-admin')
+        //     ?<ColorButton className="danger" onClick={() => this.deleteCategory()}>Delete this category</ColorButton>:null
 
         const addVideosetButton = (user && user.status.endsWith('admin'))
             ?<ColorButton className="success" onClick={() => this.addVideoset()}>Add videoset</ColorButton>:null
 
-        const deleteSubcategoryButton = (user && user.status.endsWith('admin'))
-            ?<ColorButton className="danger" onClick={() => this.deleteSubcategory()}>Delete this subcategory</ColorButton>:null
+        // const deleteSubcategoryButton = (user && user.status.endsWith('admin'))
+        //     ?<ColorButton className="danger" onClick={() => this.deleteSubcategory()}>Delete this subcategory</ColorButton>:null
 
         
         const categoriesList = (
             <div className="card">
                 <div className="card-body">
                     <h4 className="all-categories-title">All Categories</h4>
-                    <ItemList onItemSelected={this.onCategorySelected} itemList={categories} />
-                    {(!categories || categories.length === 0)?<h3 className='no-content-message'>Oops, there's no content</h3>:null}
+                    <ItemList onItemSelected={this.onCategorySelected} itemList={categories} renderItems={this.renderList(this.deleteCategory)} />
+                    {(!categories || categories.length === 0) ? <h3 className='no-content-message'>Oops, there's no content</h3> : null}
                     {addCategoryButton}
                 </div>
             </div>)
@@ -160,12 +187,11 @@ export default class CategoryPage extends Component {
             <div className="card">
                 <div className="card-body">
                     {renderCategoryTitle(selectedCategory.name)}
-                    <ItemList onItemSelected={this.onSubcategorySelected} itemList={subcategories} />
+                    <ItemList onItemSelected={this.onSubcategorySelected} itemList={subcategories} renderItems={this.renderList(this.deleteSubcategory)} />
                     {(!subcategories || subcategories.length === 0)?<h3 className='no-content-message'>Oops, there's no content</h3>:null}
-                    <div className="category-details-buttons btn-group">
+                    {/* <div className="category-details-buttons btn-group"> */}
                     {addSubcategoryButton}
-                    {deleteCategoryButton}
-                    </div>
+                    {/* </div> */}
                 </div>
             </div>
             )
@@ -180,7 +206,7 @@ export default class CategoryPage extends Component {
                     <div style={{display:'flex'}}>
                         <div className="btn-group add-videoset-button">
                             {addVideosetButton}
-                            {deleteSubcategoryButton}
+                            {/* {deleteSubcategoryButton} */}
                         </div>
                     </div>
                     ):null}
@@ -192,9 +218,9 @@ export default class CategoryPage extends Component {
         return (
             <div>
 
-                <div>
-                    <h3 className="categories-title">Categories</h3>
-                    <Row left={categoriesList} right={categoryDetails} />
+                <div className="categories-row">
+                    {/* <h3 className="categories-title">Categories</h3> */}
+                    <Row  left={categoriesList} right={categoryDetails} />
                 </div>
                 <div className="videoset-views">
                     {videosetViews}
@@ -219,8 +245,12 @@ const Row = ({ left, right }) => {
 }
 
 const VideosetCard = ({ id, name, order, logoURL, subcategoryName }) => {
-    const descriptionItem = (order)?order.find((item) => item.type === 'VideosetDescription'):null
-    const description = descriptionItem ? descriptionItem.value.split('\n')[0] : null
+    const descriptionItem = (order) ? order.find((item) => item.type === 'VideosetDescription') : null
+    let [title, description] = descriptionItem ? descriptionItem.value.split("&&&"): ['Description','']
+    description = description.split('\n')[0]
+    
+    if(description && description.length >= 300) 
+        description = description.slice(0, 300) + " ..."
     const pathToVideoset = `/videosets/${id}`
     const logo = (logoURL)?<img className='logo' src={logoURL} alt=""/>:null
     const history = useHistory()
@@ -231,9 +261,9 @@ const VideosetCard = ({ id, name, order, logoURL, subcategoryName }) => {
             }} >
             <div className="card-header">
                 <div style={{display:'flex'}} className="row">
-                    <h4 className="videoset-preview-title">
-                        <Link to={pathToVideoset}>{name}</Link>
-                    </h4>
+                    
+                    <h3 className="videoset-preview-title">{name}</h3>
+                    
                     {(subcategoryName)?<h4 className="videoset-preview-subcategory-title">Subcategory: {subcategoryName}</h4>:null}
                 </div>
             </div>
@@ -242,7 +272,7 @@ const VideosetCard = ({ id, name, order, logoURL, subcategoryName }) => {
                     {logo}
                     
                     <div className="videoset-card-description col-9">
-                        <h4 className="card-title">Description:</h4>
+                        <h4 className="card-title">{title}:</h4>
                         <p className="card-text">{description ? description : 'No description'}</p>
                     </div>
                 </div>

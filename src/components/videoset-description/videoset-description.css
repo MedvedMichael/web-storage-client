@@ -28,3 +28,13 @@
 .edit-text-area{
     font-size: x-large;
 }
+
+.text-field {
+    margin-left: -1rem;
+}
+.edit-title-area {
+    font-size: x-large;
+    width: 15rem;
+    margin-left: 2.25rem;
+    margin-top: .5rem;
+}

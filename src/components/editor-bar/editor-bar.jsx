@@ -106,11 +106,15 @@ class EditorBar extends Component {
                 <span className={`dropdown-item`} onClick={() => this.onDropdownItemClick(element)}>{element}</span>
             </div>))
 
-        const subcategoriesViews = (subcategories)?subcategories.map(({id, name})=>
-            (<div key={`add ${id}`}>
-                <span className={`dropdown-item ${this.state.videoset.owner === id ? 'text-info' : ''}`} onClick={() => this.onSubcategoryItemClick(id)}>{name}</span>
+        const currentSubcategory = (subcategories) ? subcategories.find(({ id }) => videoset.owner === id) : 0
+        
+        const subcategoriesViews = (subcategories) ? subcategories.filter(subcategory => subcategory.owner === currentSubcategory.owner)
+        .map(({id, name})=> {
+            
+            return (<div key={`add ${id}`}>
+                <span className={`dropdown-item ${videoset.owner === id ? 'text-info' : ''}`} onClick={() => this.onSubcategoryItemClick(id)}>{name}</span>
             </div>
-        )):null
+        )}):null
         const changeTitle = <button type="button" className="change-title btn btn-primary" onClick={this.onChangeTitleButtonClick}>Change title</button>
 
         const changeLogo = (

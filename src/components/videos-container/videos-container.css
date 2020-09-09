@@ -14,10 +14,32 @@
     background: url(./pictures/videocam-dark.jpg);   
 }
 
+.video-delete-button {
+    margin-left: 10rem;
+    margin-top: -2rem;
+}
+
+.change-container-title {
+    
+    margin-left: auto;
+    margin-right: 1rem;
+    margin-top: auto;
+    margin-bottom: auto;
+    /* padding:  1rem; */
+}
+
+.videos-container-title {
+    font-size: x-large;
+}
+
+.title-form {
+    padding: 1rem;
+}
+
 .video-card{
     margin-top: 1rem;
     margin-left: 2rem;
-    max-width: 150px;
+    width: 150px;
 }
 
 .video-card .card-body {

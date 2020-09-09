@@ -1,13 +1,24 @@
 
 export default class WebStorageService {
-    // _apiBase = 'http://localhost:3001/api'
-       _apiBase = 'https://mike-test-heroku-node.herokuapp.com/api'
+    _apiBase = 'http://localhost:3001/api'
+    //    _apiBase = 'https://mike-test-heroku-node.herokuapp.com/api'
     getResourse = async (url) => {
         const res = await fetch(`${this._apiBase}${url}`)
         if (!res.ok)
             throw new Error(`Could not fetch ${url}`)
 
         return await res.json()
+    }
+
+    findVideosetsByName = async (name) => {
+        try {
+            const videosets = await this.getResourse(`/findvideosets?name=${name}`)
+            
+            return videosets.map(this._transformItem)
+        }
+        catch (error) {
+            return { error: true }
+        }
     }
 
     getLast10Videosets = async (id) => {
@@ -299,6 +310,28 @@ export default class WebStorageService {
 
         return await res.json()
     }
+
+    patchVideosContainer = async (id, props) => {
+        const token = localStorage.getItem('token')
+        const res = await fetch(`${this._apiBase}/videos-container?id=${id}`, {
+            method: 'PATCH', // *GET, POST, PUT, DELETE, etc.
+            mode: 'cors', // no-cors, *cors, same-origin
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization':`Bearer ${token}`
+                // 'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: JSON.stringify(props) // body data type must match "Content-Type" header
+        })
+
+        
+        if(!res.ok)
+        return {error:true}
+
+        return await res.json()
+    }
+    
+
 
     patchVideoset = async (id, props) => {
         const token = localStorage.getItem('token')

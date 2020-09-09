@@ -75,7 +75,7 @@ export default class VideosetEditorPage extends Component {
 
             else if (element.type === 'VideosContainer' && element.value) {
                 const videos = await this.webStorageService.getVideosOfVideosContainer(element.value)
-                await this.addItemToColumn(VideosContainer, { id: element.value, videos, uploadingURLVideo: this.uploadingURLVideo, updateContainer: this.updateContainer, editable: true, onVideoClick: this.onVideoClick, uploadingVideo: this.uploadingVideo })
+                await this.addItemToColumn(VideosContainer, { name: element.name, id: element.value, videos,  saveTitle: this.saveVideosContainerTitle, deletingVideo:this.deletingVideo, uploadingURLVideo: this.uploadingURLVideo, updateContainer: this.updateContainer, editable: true, onVideoClick: this.onVideoClick, uploadingVideo: this.uploadingVideo })
             }
         }
 
@@ -166,7 +166,7 @@ export default class VideosetEditorPage extends Component {
                 ReactComponentName = VideosContainer
                 const videosContainer = await this.webStorageService.postVideosContainer(this.props.id)
                 const videos = await this.webStorageService.getVideosOfVideosContainer(videosContainer.id)
-                props = { id: videosContainer.id, videos, updateContainer:this.updateContainer,uploadingURLVideo:this.uploadingURLVideo, uploadingVideo: this.uploadingVideo, onVideoClick: this.onVideoClick, editable: true }
+                props = { id: videosContainer.id, videos, saveTitle: this.saveVideosContainerTitle, updateContainer:this.updateContainer,uploadingURLVideo:this.uploadingURLVideo, uploadingVideo: this.uploadingVideo, onVideoClick: this.onVideoClick, editable: true }
                 break
 
             default: return
@@ -193,13 +193,13 @@ export default class VideosetEditorPage extends Component {
     }
 
 
-    updateContainer = async (id) => {
+    updateContainer = async (id, extraProps = {}) => {
         
         const {itemList} = this.state
         const videos = await this.webStorageService.getVideosOfVideosContainer(id)
         
         const indexOfElement = itemList.findIndex((item) => item.props.id === id);
-        const newProps = {...itemList[indexOfElement].props,videos}
+        const newProps = {...itemList[indexOfElement].props,videos, ...extraProps}
         itemList.splice(indexOfElement,1)
         this.setState({itemList})
 
@@ -210,6 +210,12 @@ export default class VideosetEditorPage extends Component {
         const newItem = itemList1.pop()
         itemList1.splice(indexOfElement,0,newItem)
         this.setState({itemList:itemList1})
+        
+    }
+
+    saveVideosContainerTitle = (name, id) => {
+        if (name) this.webStorageService.patchVideosContainer(id, { name })
+        this.updateContainer(id, {name})
     }
 
     onVideoClick = async (video) => {
@@ -257,7 +263,7 @@ export default class VideosetEditorPage extends Component {
         const { data, itemList, deleted } = this.state
        
         const order = []
-        for(let i=0;i<itemList.length;i++){
+        for (let i = 0; i < itemList.length; i++) {
             const item = itemList[i]
             const newItem = {}
             if (item.props.text) {
@@ -271,6 +277,7 @@ export default class VideosetEditorPage extends Component {
             else if (item.props.onVideoClick) {
                 newItem.type = 'VideosContainer'
                 newItem.value = item.props.id
+                newItem.name = item.props.name
             }
             order.push(newItem)
         }
@@ -330,7 +337,7 @@ export default class VideosetEditorPage extends Component {
 
     render() {
         const { data, columnId, itemList, videoPlayer, showModal } = this.state
-
+        // console.log(this.state)
         if (!data)
             return null
         const { name } = data

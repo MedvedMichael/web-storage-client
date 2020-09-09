@@ -2,9 +2,16 @@ import React, { Component } from 'react';
 import { Link, useHistory } from 'react-router-dom'
 import './header.css'
 import WebStorageService from '../../services/web-storage-service';
+import ItemList from '../item-list/item-list';
 class Header extends Component {
 
     webStorageService = new WebStorageService()
+
+    state = {
+        foundVideosets:null,
+        search:''
+    }
+
     onSignOutButtonClick = () => {
         localStorage.setItem('user', '')
         localStorage.setItem('token', '')
@@ -32,9 +39,51 @@ class Header extends Component {
         this.props.onUserUpdate()
     }
 
+    findVideosets = async (name) => {
+        this.setState({ search: name })
+        if(name === ''){
+            return this.setState({ foundVideosets: null })
+        }
+        const videosets = await this.webStorageService.findVideosetsByName(name)
+        if (!videosets.error)
+            this.setState({ foundVideosets: videosets, search: '' })
+    }
+
+
     render() {
         // localStorage.setItem('user','')
         const { user } = this.props
+        const {foundVideosets} = this.state
+
+        const searchInput = (
+            <div className="search-input-form">
+                <input onChange={({ target }) => this.findVideosets(target.value)} className="form-control mr-sm-2" type="text" placeholder="Search" />
+            </div>
+        )
+
+        
+
+        const FoundVideoset = ({id, name, onClick}) => {
+            const history = useHistory()
+
+            return (<li className="list-group-item"
+                key={`Found${id}`}
+                onClick={() => {
+                    onClick()
+                    history.push('../')
+                    history.push(`/videosets/${id}`)
+
+                }}>{name}
+            </li>)
+        }
+
+        const renderFoundVideosets = (list) => {
+            return list.map(({ id, name }) => <FoundVideoset key={`Found${id}`} id={id} name={name} onClick={()=>this.setState({foundVideosets:null})} />)
+        }
+
+        const findedVideosetsViews = foundVideosets ? (
+            <ItemList itemList={foundVideosets} renderItems={renderFoundVideosets} />
+        ) : null
 
 
         const ViewAllUsersButton = () => {
@@ -66,7 +115,14 @@ class Header extends Component {
                 <div className="web-storage-title">
                     <Link to="/">Web Storage</Link>
                 </div>
-                {userCard}
+                <div className="flex header-card-box">
+                    {userCard}
+                    {searchInput}
+                    <div className="found-videosets">
+                        {findedVideosetsViews}
+                    </div>
+                </div>
+
 
             </div>
         )

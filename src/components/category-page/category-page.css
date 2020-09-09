@@ -6,6 +6,7 @@
 .subcategories-list {
     padding-top: .5rem;
 }
+
 .videoset-views {
     padding-top: 2.5rem;
     padding-bottom: 2.5rem;
@@ -35,6 +36,7 @@
     background-color 0.15s ease-in-out,
     border-color 0.15s ease-in-out,
     box-shadow 0.15s ease-in-out;
+    cursor: pointer;
 }
 
 .all-categories-title{
@@ -42,8 +44,9 @@
 }
 
 .videoset-preview-title{
-    margin-top: .25rem;
-    margin-left: .5rem;
+    margin-top: .5rem;
+    margin-left: .75rem;
+
 }
 
 
@@ -73,7 +76,7 @@
 .videoset-preview-subcategory-title{
     margin-left: auto;
     margin-right: .5rem;
-    margin-top: .25rem;
+    margin-top: 1rem;
 }
 
 .logo {
@@ -99,4 +102,18 @@
 .subcategory-title {
     padding-bottom: .5rem;
     margin-left: .5rem;
+}
+
+
+.categories-row{
+    margin-top: 1rem;
+}
+
+.list-delete-button {
+    display: block;
+    margin-left: auto;
+}
+.list-item-title {
+    display: block;
+    margin-top: .5rem;
 }
